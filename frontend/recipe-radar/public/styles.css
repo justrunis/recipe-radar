@@ -1,0 +1,97 @@
+:root {
+  --primary-color: #ff6347; /* Coral */
+  --secondary-color: #8a2be2; /* Blue Violet */
+  --accent-color: #ffd700; /* Gold */
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5; /* Light Gray */
+}
+
+.header {
+  background-color: var(--primary-color);
+  margin: auto -16px;
+  padding: 16px 32px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+}
+
+footer {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  text-align: center;
+  background-color: var(--primary-color);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+footer p {
+  color: black;
+}
+
+.recipes-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.description {
+  font-size: 16px;
+  color: gray;
+}
+
+.meal-container {
+  margin-top: 20px;
+  border: 1px solid lightgray;
+  border-radius: 10px;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.meal-name {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.meal-image {
+  width: 100%;
+  max-height: 200px;
+  border-radius: 10px;
+}
+
+.meal-category,
+.meal-area {
+  font-size: 16px;
+  color: var(--secondary-color);
+}
+
+.meal-instructions {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #333;
+}
+
+.meal-instructions li {
+  margin-bottom: 5px;
+}
+
+.player-container {
+  margin-top: 20px;
+}
+
+.player-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--primary-color);
+}
