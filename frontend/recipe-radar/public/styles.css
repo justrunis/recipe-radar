@@ -2,6 +2,7 @@
   --primary-color: #ff6347; /* Coral */
   --secondary-color: #8a2be2; /* Blue Violet */
   --accent-color: #ffd700; /* Gold */
+  --text-color: black; /* Black */
 }
 
 body {
@@ -58,6 +59,11 @@ footer p {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.meal-detail-container {
+  text-align: center;
+  margin-top: 10px;
+}
+
 .meal-name {
   font-size: 24px;
   font-weight: bold;
@@ -67,7 +73,10 @@ footer p {
 .meal-image {
   width: 100%;
   max-height: 200px;
+  border: 5px solid black;
   border-radius: 10px;
+  margin-top: 10px;
+  object-fit: cover;
 }
 
 .meal-category,
@@ -94,4 +103,53 @@ footer p {
   font-size: 20px;
   font-weight: bold;
   color: var(--primary-color);
+}
+
+#more h2 {
+  text-align: center;
+}
+
+#more > p {
+  text-align: center;
+  margin: 1rem 0;
+}
+
+#more menu {
+  margin: 1rem 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  list-style: none;
+}
+
+#more menu button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--primary-color);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+#more menu button:hover {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+}
+
+#more menu button.active {
+  background-color: var(--accent-color);
+  color: var(--text-color);
+}
+
+.tab-content {
+  padding: 1rem;
+  border-radius: 6px;
+  color: var(--text-color);
+}
+
+.tab-content li {
+  margin-bottom: 5px;
 }
