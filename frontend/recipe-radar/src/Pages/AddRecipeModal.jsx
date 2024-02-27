@@ -38,8 +38,6 @@ export default function AddRecipeModal({
   mode = "add",
   recipe,
 }) {
-  console.log(recipe);
-  // console.log(recipeToEdit);
   const [open, setOpen] = useState(false);
   const [recipeName, setRecipeName] = useState(recipe ? recipe.name : "");
   const [image, setImage] = useState();
@@ -57,6 +55,7 @@ export default function AddRecipeModal({
         })
       : defaultIngredients
   );
+  console.log(recipe);
   const [instructions, setInstructions] = useState(
     recipe
       ? recipe.instructions
@@ -74,11 +73,9 @@ export default function AddRecipeModal({
 
   useEffect(() => {
     if (mode === "edit" && recipe) {
-      console.log("RECIPE ", recipe);
       setRecipeName(recipe.name);
       setDifficulty(recipe.difficulty);
       setRecipeCategory(recipe.category);
-      console.log(recipe);
       // setIngredients(recipe.ingredients);
       // setInstructions(recipe.instructions);
     }
@@ -141,7 +138,6 @@ export default function AddRecipeModal({
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
-    console.log(file);
     setImage(file);
   };
 
@@ -158,6 +154,7 @@ export default function AddRecipeModal({
     if (hasError) return;
     if (mode === "edit") {
       onEdit({
+        id: recipe?.id,
         recipeName,
         difficulty,
         image,
@@ -174,14 +171,13 @@ export default function AddRecipeModal({
         ingredients,
         instructions,
       });
+      setRecipeName("");
+      setDifficulty(0);
+      setImage("");
+      setRecipeCategory("");
+      setIngredients(defaultIngredients);
+      setInstructions("");
     }
-
-    setRecipeName("");
-    setDifficulty(0);
-    setImage("");
-    setRecipeCategory("");
-    setIngredients(defaultIngredients);
-    setInstructions("");
     setOpen(false);
   };
 

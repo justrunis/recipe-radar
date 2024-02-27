@@ -20,7 +20,6 @@ export default function Recipe({ meal, onDelete, onEdit }) {
     <div className=" col-4 px-2">
       <div className="meal-container">
         <h2 className="meal-name">{meal.name}</h2>
-        {console.log(meal.image)}
         <img
           className="meal-image"
           src={

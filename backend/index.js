@@ -115,9 +115,10 @@ app.post("/addRecipe", async (req, res) => {
       [recipeId]
     );
 
+    const result = await getRecipeById(recipeId);
     res.json({
       message: "Recipe added successfully",
-      instructions: allInstructions.rows,
+      result: result,
     });
   } catch (error) {
     console.error("Error adding recipe:", error);
@@ -140,19 +141,30 @@ app.delete("/deleteRecipe/:id", async (req, res) => {
   res.json({ message: "Recipe deleted successfully" });
 });
 
+async function getRecipeById(id) {
+  const recipe = await query("SELECT * FROM recipes WHERE id = $1", [id]);
+  const ingredients = await query(
+    "SELECT * FROM ingredients WHERE recipe_id = $1",
+    [id]
+  );
+  const instructions = await query(
+    "SELECT * FROM instructions WHERE recipe_id = $1",
+    [id]
+  );
+
+  const combinedRecipe = {
+    ...recipe.rows[0],
+    ingredients: ingredients.rows,
+    instructions: instructions.rows,
+  };
+
+  return combinedRecipe;
+}
+
 app.patch("/editRecipe", async (req, res) => {
-  console.log(req.body);
-  const id = req.body.ingredients[0].recipe_id;
-  console.log(id);
+  const id = req.body.id;
   const { recipeName, recipeCategory, difficulty, ingredients, instructions } =
     req.body;
-  console.log(
-    recipeName,
-    recipeCategory,
-    difficulty,
-    ingredients,
-    instructions
-  );
   await query(
     "UPDATE recipes SET name = $1, category = $2, difficulty = $3 WHERE id = $4",
     [recipeName, recipeCategory, difficulty, id]
@@ -175,11 +187,17 @@ app.patch("/editRecipe", async (req, res) => {
       [id, i + 1, instruction]
     );
   }
+
+  const result = await getRecipeById(id);
+
+  res.json({
+    message: "Recipe added successfully",
+    result: result,
+  });
 });
 
 app.post("/api/saveImage", upload.single("file"), (req, res) => {
   const file = req.file;
-  console.log(file);
   res.json({ file: file });
 });
 

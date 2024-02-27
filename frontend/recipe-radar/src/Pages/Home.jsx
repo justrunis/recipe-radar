@@ -19,6 +19,7 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   // const [allRecipes, setAllRecipes] = useState(data.recipes);
   const [allRecipes, setAllRecipes] = useState([]);
+  console.log(allRecipes);
   const itemsPerPage = 3;
   const totalPages = Math.ceil(allRecipes.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -32,7 +33,6 @@ export default function Home() {
   async function getAllRecipes() {
     const URL = variables.API_URL + "getAllRecipes";
     const data = await makeGetRequest(URL);
-    console.log(data);
     return data;
   }
 
@@ -60,7 +60,6 @@ export default function Home() {
   ) {
     instructions = instructions.split("\n");
 
-    console.log(recipeImage);
     if (recipeName === "") {
       toast.error("Please enter a recipe name!");
       return;
@@ -77,22 +76,8 @@ export default function Home() {
       toast.error("Please provide at least one instruction!");
       return;
     }
-    setAllRecipes([
-      ...allRecipes,
-      {
-        name: recipeName,
-        difficulty: recipeDifficulty,
-        image: recipeImage,
-        category: recipeCategory,
-        ingredients: ingredients,
-        instructions: instructions.map((instruction, index) => ({
-          id: index + 1,
-          step: instruction,
-        })),
-      },
-    ]);
     const URL = variables.API_URL + "addRecipe";
-    const response = await makePostRequest(URL, {
+    const result = await makePostRequest(URL, {
       name: recipeName,
       difficulty: recipeDifficulty,
       image: recipeImage,
@@ -100,17 +85,7 @@ export default function Home() {
       ingredients: ingredients,
       instructions: instructions,
     });
-    setAllRecipes([
-      ...allRecipes,
-      {
-        name: recipeName,
-        difficulty: recipeDifficulty,
-        image: recipeImage,
-        category: recipeCategory,
-        ingredients: ingredients,
-        instructions: response.instructions,
-      },
-    ]);
+    setAllRecipes([...allRecipes, result.result]);
     // const data = new FormData();
     // data.append("file", recipeImage);
     // console.log(data);
@@ -134,14 +109,12 @@ export default function Home() {
 
   async function editRecipe(recipe) {
     const URL = variables.API_URL + "editRecipe";
-    const response = await makePatchRequest(URL, recipe);
-    if (response) {
-      const updatedRecipes = allRecipes.map((r) =>
-        r.id === recipe.id ? recipe : r
-      );
-      setAllRecipes(updatedRecipes);
-      toast.success("Recipe updated successfully!");
-    }
+    const result = await makePatchRequest(URL, recipe);
+    const index = allRecipes.findIndex((r) => r.id === recipe.id);
+    const updatedRecipes = [...allRecipes];
+    updatedRecipes[index] = result.result;
+    setAllRecipes(updatedRecipes);
+    toast.success("Recipe updated successfully!");
   }
 
   return (
