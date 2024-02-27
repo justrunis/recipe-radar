@@ -2,27 +2,32 @@ import React, { useState } from "react";
 import Section from "./Section";
 import Tabs from "./Tabs";
 import TabButton from "./TabButton";
+import IngredientsTab from "./IngredientsTab";
+import InstructionsTab from "./InstructionsTab";
 
 export default function RecipeInformation({ ingredients, instructions }) {
-  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [selectedTab, setSelectedTab] = useState(null);
 
   function handleSelect(selectedTab) {
-    setSelectedRecipe(selectedTab);
+    setSelectedTab((prevSelectedTab) =>
+      prevSelectedTab === selectedTab ? null : selectedTab
+    );
   }
 
   return (
     <Section id="more">
       <Tabs
+        selectedTab={selectedTab}
         buttons={
           <>
             <TabButton
-              isSelected={selectedRecipe === "ingredients"}
+              isSelected={selectedTab === "ingredients"}
               onClick={() => handleSelect("ingredients")}
             >
               Ingredients
             </TabButton>
             <TabButton
-              isSelected={selectedRecipe === "instructions"}
+              isSelected={selectedTab === "instructions"}
               onClick={() => handleSelect("instructions")}
             >
               Instructions
@@ -30,30 +35,15 @@ export default function RecipeInformation({ ingredients, instructions }) {
           </>
         }
       >
-        {!selectedRecipe ? (
+        {!selectedTab ? (
           <p>Select a tab to view more information</p>
         ) : (
           <>
-            {selectedRecipe === "ingredients" && (
-              <ul className="tab-content">
-                {ingredients &&
-                  ingredients.map((ingredient, index) => (
-                    <li key={index}>
-                      {ingredient.amount} {ingredient.name}
-                      {ingredient.type && ` (${ingredient.type})`}
-                    </li>
-                  ))}
-              </ul>
+            {selectedTab === "ingredients" && (
+              <IngredientsTab ingredients={ingredients} />
             )}
-            {selectedRecipe === "instructions" && (
-              <>
-                <ol className="tab-content">
-                  {instructions &&
-                    instructions.map((instruction, index) => (
-                      <li key={index}>{instruction}</li>
-                    ))}
-                </ol>
-              </>
+            {selectedTab === "instructions" && (
+              <InstructionsTab instructions={instructions} />
             )}
           </>
         )}

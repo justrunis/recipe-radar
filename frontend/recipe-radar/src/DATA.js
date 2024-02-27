@@ -1,8 +1,10 @@
 export const data = {
   recipes: [
     {
+      id: 0,
       name: "Spaghetti Carbonara",
       category: "Italian",
+      difficulty: 1,
       ingredients: [
         { name: "Spaghetti pasta", amount: "200g" },
         { name: "Eggs", amount: "2" },
@@ -21,8 +23,10 @@ export const data = {
       ],
     },
     {
+      id: 1,
       name: "Chicken Tikka Masala",
       category: "Indian",
+      difficulty: 3,
       ingredients: [
         { name: "Chicken breast", amount: "500g", type: "boneless, skinless" },
         { name: "Yogurt", amount: "200g", type: "plain" },
@@ -49,8 +53,10 @@ export const data = {
       ],
     },
     {
+      id: 2,
       name: "Cepelinai (Lithuanian Potato Dumplings)",
       category: "Lithuanian",
+      difficulty: 5,
       ingredients: [
         { name: "Potatoes", amount: "1 kg", type: "peeled and grated" },
         { name: "Ground pork", amount: "500g" },
@@ -74,8 +80,10 @@ export const data = {
       ],
     },
     {
+      id: 3,
       name: "Bulviniai Blynai (Potato Pancakes)",
       category: "Lithuanian",
+      difficulty: 2,
       ingredients: [
         { name: "Potatoes", amount: "1 kg", type: "peeled and grated" },
         { name: "Onion", amount: "1 large", type: "finely chopped" },
@@ -98,8 +106,10 @@ export const data = {
       ],
     },
     {
+      id: 4,
       name: "Balandėliai (Stuffed Cabbage Rolls)",
       category: "Lithuanian",
+      difficulty: 3,
       ingredients: [
         { name: "Cabbage leaves", amount: "1 large head" },
         { name: "Ground pork", amount: "500g" },
@@ -120,6 +130,29 @@ export const data = {
         "In a large pot, arrange the cabbage rolls seam side down. Pour tomato sauce over the rolls, add bay leaves, and pour water over the top.",
         "Cover the pot and simmer over low heat for about 1.5 to 2 hours, or until the cabbage rolls are tender and the filling is cooked through.",
         "Serve hot, spooning some tomato sauce over the top of each roll.",
+      ],
+    },
+    {
+      id: 5,
+      name: "Mieliniai Blynai su Varške (Sweet Cottage Cheese Pancakes)",
+      category: "Lithuanian",
+      difficulty: 1,
+      ingredients: [
+        { name: "Cottage cheese", amount: "500g" },
+        { name: "Flour", amount: "1 cup" },
+        { name: "Sugar", amount: "2 tbsp" },
+        { name: "Eggs", amount: "2" },
+        { name: "Vanilla extract", amount: "1 tsp" },
+        { name: "Salt", amount: "1/4 tsp" },
+        { name: "Sour cream", amount: "for serving" },
+        { name: "Jam or fruit compote", amount: "for serving" },
+      ],
+      instructions: [
+        "In a mixing bowl, combine cottage cheese, flour, sugar, eggs, vanilla extract, and salt.",
+        "Heat a skillet over medium heat and lightly grease with butter or oil.",
+        "Drop spoonfuls of the cottage cheese batter onto the skillet, spreading them slightly into circles.",
+        "Cook until golden brown on both sides, flipping halfway through, about 2-3 minutes per side.",
+        "Serve hot with sour cream and jam or fruit compote.",
       ],
     },
   ],
