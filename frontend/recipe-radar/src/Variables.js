@@ -15,4 +15,5 @@ export const variables = {
     { strCategory: "Vegan" },
     { strCategory: "Vegetarian" },
   ],
+  API_URL: "http://localhost:4000/",
 };

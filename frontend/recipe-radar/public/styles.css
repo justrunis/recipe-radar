@@ -170,3 +170,10 @@ footer p {
   margin-top: 1rem;
   margin-left: 1rem;
 }
+
+.meal-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  margin-left: 1rem;
+}

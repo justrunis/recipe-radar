@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -13,6 +13,8 @@ import { variables } from "../Variables";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { saveAs } from "file-saver";
+import Rating from "@mui/material/Rating";
+import { red } from "@mui/material/colors";
 
 const style = {
   position: "absolute",
@@ -30,18 +32,57 @@ const defaultIngredients = [
   { name: "", amount: "", type: "", error: { name: false, amount: false } },
 ];
 
-export default function AddRecipeModal({ onSave }) {
+export default function AddRecipeModal({
+  onSave,
+  onEdit,
+  mode = "add",
+  recipe,
+}) {
+  console.log(recipe);
+  // console.log(recipeToEdit);
   const [open, setOpen] = useState(false);
-  const [recipeName, setRecipeName] = useState("");
+  const [recipeName, setRecipeName] = useState(recipe ? recipe.name : "");
   const [image, setImage] = useState();
-  const [recipeCategory, setRecipeCategory] = useState("");
-  const [ingredients, setIngredients] = useState(defaultIngredients);
-  const [instructions, setInstructions] = useState("");
+  const [difficulty, setDifficulty] = useState(recipe ? recipe.difficulty : 0);
+  const [recipeCategory, setRecipeCategory] = useState(
+    recipe ? recipe.category : ""
+  );
+  const [ingredients, setIngredients] = useState(
+    recipe
+      ? recipe.ingredients.map((ingredient) => {
+          return {
+            ...defaultIngredients[0],
+            ...ingredient,
+          };
+        })
+      : defaultIngredients
+  );
+  const [instructions, setInstructions] = useState(
+    recipe
+      ? recipe.instructions
+          .map((instruction) => {
+            return instruction.instruction;
+          })
+          .join("\n")
+      : ""
+  );
   const [showError, setShowError] = useState({
     name: false,
     category: false,
     instructions: false,
   });
+
+  useEffect(() => {
+    if (mode === "edit" && recipe) {
+      console.log("RECIPE ", recipe);
+      setRecipeName(recipe.name);
+      setDifficulty(recipe.difficulty);
+      setRecipeCategory(recipe.category);
+      console.log(recipe);
+      // setIngredients(recipe.ingredients);
+      // setInstructions(recipe.instructions);
+    }
+  }, [mode, recipe]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -65,14 +106,16 @@ export default function AddRecipeModal({ onSave }) {
     setRecipeName(event.target.value);
   };
 
+  const handleRatingChange = (event) => {
+    setDifficulty(event.target.value);
+  };
+
   const handleCategoryChange = (event) => {
-    if (event.target.value.length === 0) {
-      setShowError((prevShowError) => ({ ...prevShowError, category: true }));
-      setRecipeCategory("");
-    } else {
-      setShowError((prevShowError) => ({ ...prevShowError, category: false }));
-      setRecipeCategory(event.target.value);
-    }
+    setShowError((prevShowError) => ({
+      ...prevShowError,
+      category: !event.target.value.length,
+    }));
+    setRecipeCategory(event.target.value);
   };
 
   const handleAddIngredient = () => {
@@ -89,6 +132,10 @@ export default function AddRecipeModal({ onSave }) {
   };
 
   const handleInstructionsChange = (event) => {
+    setShowError((prevShowError) => ({
+      ...prevShowError,
+      instructions: !event.target.value.length,
+    }));
     setInstructions(event.target.value);
   };
 
@@ -109,16 +156,28 @@ export default function AddRecipeModal({ onSave }) {
     }
 
     if (hasError) return;
-
-    onSave({
-      recipeName,
-      image,
-      recipeCategory,
-      ingredients,
-      instructions,
-    });
+    if (mode === "edit") {
+      onEdit({
+        recipeName,
+        difficulty,
+        image,
+        recipeCategory,
+        ingredients,
+        instructions,
+      });
+    } else {
+      onSave({
+        recipeName,
+        difficulty,
+        image,
+        recipeCategory,
+        ingredients,
+        instructions,
+      });
+    }
 
     setRecipeName("");
+    setDifficulty(0);
     setImage("");
     setRecipeCategory("");
     setIngredients(defaultIngredients);
@@ -128,11 +187,17 @@ export default function AddRecipeModal({ onSave }) {
 
   return (
     <>
-      <div className="button-container">
-        <Button variant="contained" onClick={handleOpen}>
-          Add recipe
-        </Button>
-      </div>
+      <Button
+        className={mode === "edit" ? "" : "ml-3 mt-3"}
+        style={{
+          textTransform: "uppercase",
+          marginLeft: mode === "edit" ? "0" : "1.5rem",
+        }}
+        variant="contained"
+        onClick={handleOpen}
+      >
+        {mode === "edit" ? "Edit" : "Add recipe"}
+      </Button>
       <Modal
         open={open}
         onClose={handleClose}
@@ -157,9 +222,6 @@ export default function AddRecipeModal({ onSave }) {
             )}
           </FormControl>
           <FormControl fullWidth margin="dense">
-            <InputLabel htmlFor="recipe-category-input">
-              Upload Image
-            </InputLabel>
             <Input
               id="recipe-image-input"
               type="file"
@@ -184,11 +246,21 @@ export default function AddRecipeModal({ onSave }) {
                 </MenuItem>
               ))}
             </Select>
-            {recipeCategory.length === 0 && (
+            {showError.category && (
               <Typography color="error" variant="caption">
                 Category field cannot be empty!
               </Typography>
             )}
+          </FormControl>
+          <Typography variant="subtitle1">Difficulty:</Typography>
+          <FormControl fullWidth margin="dense">
+            <Rating
+              name="difficulty"
+              defaultValue={0}
+              max={5}
+              onChange={handleRatingChange}
+              value={difficulty}
+            />
           </FormControl>
           <Typography variant="subtitle1">Ingredients:</Typography>
           {ingredients.map((ingredient, index) => (
@@ -258,7 +330,7 @@ export default function AddRecipeModal({ onSave }) {
               value={instructions}
               onChange={handleInstructionsChange}
             />
-            {instructions.length === 0 && (
+            {showError.instructions && (
               <Typography color="error" variant="caption">
                 Instructions field cannot be empty!
               </Typography>

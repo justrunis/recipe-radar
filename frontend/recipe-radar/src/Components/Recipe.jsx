@@ -1,13 +1,20 @@
 import React from "react";
 import RecipeInformation from "./RecipeInformation";
 import Rating from "@mui/material/Rating";
+import AddRecipeModal from "../Pages/AddRecipeModal";
+import Button from "@mui/material/Button";
 
-export default function Recipe({ meal }) {
+export default function Recipe({ meal, onDelete, onEdit }) {
   if (!meal) return null;
 
-  function getRandomNumber(from, to) {
-    return Math.floor(Math.random() * to) + from;
-  }
+  const deleteRecipe = async (id, name) => {
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete ${name} recipe?`
+    );
+    if (confirmDelete) {
+      onDelete(id);
+    }
+  };
 
   return (
     <div className=" col-4 px-2">
@@ -32,6 +39,20 @@ export default function Recipe({ meal }) {
         />
         <h2 className="meal-category">Difficulty</h2>
         <Rating value={meal.difficulty} disabled />
+        <div className="button-container">
+          <AddRecipeModal mode="edit" recipe={meal} onEdit={onEdit} />
+          <Button
+            variant="contained"
+            style={{
+              textTransform: "uppercase",
+              color: "#fff",
+              backgroundColor: "#dc3545",
+            }}
+            onClick={() => deleteRecipe(meal.id, meal.name)}
+          >
+            Remove
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -2,9 +2,11 @@ import React from "react";
 
 const InstructionsTab = ({ instructions }) => (
   <ol className="tab-content">
-    {instructions.map((instruction, index) => (
-      <li key={index}>{instruction}</li>
-    ))}
+    {instructions
+      .sort((a, b) => a.step_number - b.step_number)
+      .map((instruction, index) => (
+        <li key={index}>{instruction.instruction}</li>
+      ))}
   </ol>
 );
 

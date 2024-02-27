@@ -7,7 +7,7 @@ export async function makeGetRequest(url) {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwtToken"),
+        // Authorization: "Bearer " + localStorage.getItem("jwtToken"),
       },
     });
     if (response.ok) {
@@ -33,7 +33,7 @@ export async function makePostRequest(url, data) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwtToken"),
+        // Authorization: "Bearer " + localStorage.getItem("jwtToken"),
       },
       body: JSON.stringify(data),
     });
@@ -57,7 +57,7 @@ export async function makeDeleteRequest(url) {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwtToken"),
+        // Authorization: "Bearer " + localStorage.getItem("jwtToken"),
       },
     });
 
@@ -85,7 +85,7 @@ export async function makePatchRequest(url, data) {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwtToken"),
+        // Authorization: "Bearer " + localStorage.getItem("jwtToken"),
       },
       body: JSON.stringify(data),
     });
