@@ -6,7 +6,9 @@ import path from "path";
 // import db from "./database.js";
 import dotenv from "dotenv";
 import pg from "pg";
+import fileUpload from "express-fileupload";
 const { Pool } = pg;
+import fs from "fs";
 
 dotenv.config();
 
@@ -28,6 +30,7 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.json());
+app.use(fileUpload());
 
 const db = new Pool({
   user: process.env.DB_USER,
@@ -135,6 +138,13 @@ app.delete("/deleteRecipe/:id", async (req, res) => {
   // Delete instructions
   await query("DELETE FROM instructions WHERE recipe_id = $1", [id]);
 
+  // Delete image
+  const image = await query("SELECT * FROM images WHERE recipe_id = $1", [id]);
+  if (image.rows.length > 0) {
+    removeImageFromFolder(image.rows[0].filename);
+    await query("DELETE FROM images WHERE recipe_id = $1", [id]);
+  }
+
   // Delete recipe
   await query("DELETE FROM recipes WHERE id = $1", [id]);
 
@@ -196,15 +206,72 @@ app.patch("/editRecipe", async (req, res) => {
   });
 });
 
-app.post("/api/saveImage", upload.single("file"), (req, res) => {
-  const file = req.file;
-  res.json({ file: file });
+function removeImageFromFolder(fileName) {
+  const imagePath = `${__dirname}/images/${fileName}`;
+  console.log(imagePath);
+  fs.unlink(imagePath, (err) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+  });
+}
+
+/// save image
+app.post("/saveImage", (req, res) => {
+  console.log(req.body.recipeId);
+  console.log(req.files);
+  const file = req.files.file; // Assuming the file input field name is "file"
+
+  // Move the file to the desired location
+  file.mv(`${__dirname}/images/${file.name}`, async (err) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: "Failed to save the file" });
+    } else {
+      const currentImage = await query(
+        "SELECT * FROM images WHERE recipe_id = $1",
+        [req.body.recipeId]
+      );
+      if (currentImage.rows.length > 0) {
+        removeImageFromFolder(currentImage.rows[0].filename);
+        await query(
+          "UPDATE images SET filename = $1, filepath = $2, mimetype = $3, size = $4 WHERE recipe_id = $5",
+          [
+            file.name,
+            `/images/${file.name}`,
+            file.mimetype,
+            file.size,
+            req.body.recipeId,
+          ]
+        );
+      } else {
+        await query(
+          "INSERT INTO images (filename, filepath, mimetype, size, recipe_id) VALUES ($1, $2, $3, $4, $5)",
+          [
+            file.name,
+            `/images/${file.name}`,
+            file.mimetype,
+            file.size,
+            req.body.recipeId,
+          ]
+        );
+      }
+      res.json({
+        message: "File saved successfully",
+      });
+    }
+  });
 });
 
-app.get("/images/:filename", (req, res) => {
-  const filename = req.params.filename;
-
-  res.sendFile(`${__dirname}/images/${filename}`);
+/// get recipe image
+app.get("/recipeImage/:id", async (req, res) => {
+  const id = req.params.id;
+  const image = await query("SELECT * FROM images WHERE recipe_id = $1", [id]);
+  const imagePath =
+    image.rows[0]?.filepath || "/images/default/default-image.png";
+  console.log(`${__dirname}${imagePath}`);
+  res.sendFile(`${__dirname}${imagePath}`);
 });
 
 app.listen(port, () => {

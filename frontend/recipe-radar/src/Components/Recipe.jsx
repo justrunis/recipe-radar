@@ -1,11 +1,35 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import RecipeInformation from "./RecipeInformation";
 import Rating from "@mui/material/Rating";
 import AddRecipeModal from "../Pages/AddRecipeModal";
 import Button from "@mui/material/Button";
+import { getRecipeImageById } from "../Helpers/databaseRequests";
+import { variables } from "../Variables";
 
 export default function Recipe({ meal, onDelete, onEdit }) {
-  if (!meal) return null;
+  const [imageUrl, setImageUrl] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!meal || !meal.id) return;
+
+    const fetchImage = async () => {
+      try {
+        const URL = variables.API_URL + "recipeImage/" + meal.id;
+        const image = await getRecipeImageById(URL);
+        console.log("Image Blob:", image);
+        if (image) {
+          const imageUrl = window.URL.createObjectURL(image);
+          console.log("Image URL:", imageUrl);
+          setImageUrl(imageUrl);
+        }
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
+    };
+
+    fetchImage();
+  }, [meal]);
 
   const deleteRecipe = async (id, name) => {
     const confirmDelete = window.confirm(
@@ -22,11 +46,7 @@ export default function Recipe({ meal, onDelete, onEdit }) {
         <h2 className="meal-name">{meal.name}</h2>
         <img
           className="meal-image"
-          src={
-            meal.image
-              ? URL.createObjectURL(meal.image)
-              : "./images/default-image.png"
-          }
+          src={imageUrl || "./images/default-image.png"}
           alt={`${meal.name} image`}
         />
         <div className="meal-detail-container">

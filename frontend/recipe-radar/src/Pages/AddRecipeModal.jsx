@@ -55,7 +55,7 @@ export default function AddRecipeModal({
         })
       : defaultIngredients
   );
-  console.log(recipe);
+  // console.log(recipe);
   const [instructions, setInstructions] = useState(
     recipe
       ? recipe.instructions

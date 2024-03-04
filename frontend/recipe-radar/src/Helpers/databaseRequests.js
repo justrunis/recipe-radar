@@ -100,3 +100,23 @@ export async function makePatchRequest(url, data) {
     throw error;
   }
 }
+
+export async function getRecipeImageById(url) {
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      // headers: {
+      //   "Content-Type": "multipart/form-data",
+      //   // Authorization: "Bearer " + localStorage.getItem("jwtToken"),
+      // },
+    });
+    if (response.ok) {
+      return await response.blob();
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+}

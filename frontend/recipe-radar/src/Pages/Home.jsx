@@ -17,9 +17,7 @@ import { variables } from "../Variables";
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
-  // const [allRecipes, setAllRecipes] = useState(data.recipes);
   const [allRecipes, setAllRecipes] = useState([]);
-  console.log(allRecipes);
   const itemsPerPage = 3;
   const totalPages = Math.ceil(allRecipes.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -60,6 +58,11 @@ export default function Home() {
   ) {
     instructions = instructions.split("\n");
 
+    console.log(recipeImage);
+    const formData = new FormData();
+    formData.append("file", recipeImage);
+    console.log(formData);
+
     if (recipeName === "") {
       toast.error("Please enter a recipe name!");
       return;
@@ -76,24 +79,43 @@ export default function Home() {
       toast.error("Please provide at least one instruction!");
       return;
     }
+
+    try {
+      const res = await axios.post(variables.API_URL + "saveImage", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(res);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
     const URL = variables.API_URL + "addRecipe";
     const result = await makePostRequest(URL, {
       name: recipeName,
       difficulty: recipeDifficulty,
-      image: recipeImage,
       category: recipeCategory,
       ingredients: ingredients,
       instructions: instructions,
     });
+
+    const recipeId = result.result.id;
+    formData.append("recipeId", recipeId);
+
+    try {
+      const res = await axios.post(variables.API_URL + "saveImage", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(res);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
     setAllRecipes([...allRecipes, result.result]);
-    // const data = new FormData();
-    // data.append("file", recipeImage);
-    // console.log(data);
-    // axios.post("http://localhost:4000/api/saveImage", data).then((res) => {
-    //   console.log(res);
-    // });
-    // const URL = "http://localhost:4000/api/saveImage";
-    // makePostRequest(URL, { image: data });
+
     toast.success(`${recipeName} recipe added successfully!`);
   }
 

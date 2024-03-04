@@ -21,6 +21,15 @@ CREATE TABLE instructions (
     instruction TEXT
 );
 
+CREATE TABLE IF NOT EXISTS images (
+  id SERIAL PRIMARY KEY,
+  recipe_id INTEGER REFERENCES recipes(id),
+  filename VARCHAR(255) NOT NULL,
+  filepath VARCHAR(255) NOT NULL,
+  mimetype VARCHAR(100) NOT NULL,
+  size INTEGER NOT NULL
+);
+
 INSERT INTO recipes (name, category, difficulty) 
 VALUES ('Spaghetti Carbonara', 'Italian', 1);
 
