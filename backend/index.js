@@ -64,11 +64,14 @@ async function query(sql, params) {
 
 /// get all recipes with ingredients and instructions
 app.get("/getAllRecipes", async (req, res) => {
+  console.log(req.query);
+  const { category, difficulty, search } = req.query;
+
   const recipes = await query("SELECT * FROM recipes");
   const ingredients = await query("SELECT * FROM ingredients");
   const instructions = await query("SELECT * FROM instructions");
 
-  const combinedRecipes = recipes.rows.map((recipe) => {
+  let combinedRecipes = recipes.rows.map((recipe) => {
     const recipeIngredients = ingredients.rows.filter(
       (ingredient) => ingredient.recipe_id === recipe.id
     );
@@ -82,6 +85,23 @@ app.get("/getAllRecipes", async (req, res) => {
       instructions: recipeInstructions,
     };
   });
+
+  if (category) {
+    combinedRecipes = combinedRecipes.filter((recipe) => {
+      return recipe.category === category;
+    });
+  }
+  if (difficulty && difficulty != 0) {
+    combinedRecipes = combinedRecipes.filter((recipe) => {
+      return recipe.difficulty === +difficulty;
+    });
+  }
+  if (search) {
+    const searchQuery = search.toLowerCase();
+    combinedRecipes = combinedRecipes.filter((recipe) => {
+      return recipe.name.toLowerCase().includes(searchQuery);
+    });
+  }
 
   res.json(combinedRecipes);
 });

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Header from "../Components/Header";
 import Recipe from "../Components/Recipe";
-// import { data } from "../DATA";
 import Footer from "../Components/Footer";
 import { Pagination } from "@mui/material";
 import AddRecipeModal from "./AddRecipeModal";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import {
   makeGetRequest,
   makePostRequest,
@@ -14,14 +13,58 @@ import {
 } from "../Helpers/databaseRequests";
 import axios from "axios";
 import { variables } from "../Variables";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Rating from "@mui/material/Rating";
+import RecipeFilters from "../Components/RecipeFilters";
+import { useQuery } from "react-query";
+import { queryClient } from "../App";
+
+const invalidate = async () => {
+  await queryClient.invalidateQueries({
+    queryKey: ["allRecipes"],
+  });
+};
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [allRecipes, setAllRecipes] = useState([]);
-  const itemsPerPage = 3;
-  const totalPages = Math.ceil(allRecipes.length / itemsPerPage);
+  const itemsPerPage = 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
+  const [filter, setFilter] = useState({
+    category: "",
+    difficulty: 0,
+    search: "",
+  });
+
+  let { data: allRecipes } = useQuery({
+    queryKey: ["allRecipes", filter.category, filter.difficulty, filter.search],
+    queryFn: () =>
+      fetch(
+        variables.API_URL +
+          "getAllRecipes?" +
+          new URLSearchParams({
+            category: filter.category,
+            difficulty: filter.difficulty,
+            search: filter.search,
+          }),
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            // Authorization: "Bearer " + localStorage.getItem("jwtToken"),
+          },
+        }
+      ).then((res) => res.json()),
+    staleTime: 100000000000,
+  });
+  if (!allRecipes) {
+    allRecipes = [];
+  }
+
+  const totalPages = Math.ceil(allRecipes.length / itemsPerPage);
   const currentRecipes = allRecipes.slice(startIndex, endIndex);
 
   const handlePageChange = (event, page) => {
@@ -34,20 +77,6 @@ export default function Home() {
     return data;
   }
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const allRecipes = await getAllRecipes();
-
-        setAllRecipes(allRecipes);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    }
-
-    fetchData();
-  }, []);
-
   async function AddRecipe(
     recipeName,
     recipeDifficulty,
@@ -58,10 +87,8 @@ export default function Home() {
   ) {
     instructions = instructions.split("\n");
 
-    console.log(recipeImage);
     const formData = new FormData();
     formData.append("file", recipeImage);
-    console.log(formData);
 
     if (recipeName === "") {
       toast.error("Please enter a recipe name!");
@@ -86,7 +113,6 @@ export default function Home() {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log(res);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -109,12 +135,12 @@ export default function Home() {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log(res);
     } catch (error) {
       console.error("Error:", error);
     }
 
-    setAllRecipes([...allRecipes, result.result]);
+    // setAllRecipes([...allRecipes, result.result]);
+    invalidate();
 
     toast.success(`${recipeName} recipe added successfully!`);
   }
@@ -123,8 +149,9 @@ export default function Home() {
     const URL = variables.API_URL + "deleteRecipe/" + id;
     const response = await makeDeleteRequest(URL);
     if (response) {
-      const updatedRecipes = allRecipes.filter((recipe) => recipe.id !== id);
-      setAllRecipes(updatedRecipes);
+      // const updatedRecipes = allRecipes.filter((recipe) => recipe.id !== id);
+      // setAllRecipes(updatedRecipes);
+      invalidate();
       toast.success("Recipe deleted successfully!");
     }
   }
@@ -146,18 +173,40 @@ export default function Home() {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log(res);
     } catch (error) {
       console.error("Error:", error);
     }
 
-    setAllRecipes(updatedRecipes);
+    // setAllRecipes(updatedRecipes);
+    invalidate();
     toast.success("Recipe updated successfully!");
+  }
+
+  async function handleCategoryFilterChange(event) {
+    setFilter({ ...filter, category: event.target.value });
+  }
+
+  async function handleDifficultyFilterChange(event) {
+    setFilter({
+      ...filter,
+      difficulty:
+        +event.target.value == filter.difficulty ? 0 : +event.target.value,
+    });
+  }
+
+  async function handleSearchFilterChange(event) {
+    setFilter({ ...filter, search: event.target.value });
   }
 
   return (
     <div>
       <Header />
+      <RecipeFilters
+        filter={filter}
+        onCategoryChange={handleCategoryFilterChange}
+        onDifficultyChange={handleDifficultyFilterChange}
+        onSearchChange={handleSearchFilterChange}
+      />
       <AddRecipeModal
         onSave={(recipe) =>
           AddRecipe(
@@ -181,14 +230,16 @@ export default function Home() {
         ))}
       </div>
       <div className="pager">
-        <Pagination
-          count={totalPages}
-          page={currentPage}
-          onChange={handlePageChange}
-          variant="outlined"
-          color="primary"
-          size="large"
-        />
+        {totalPages > 1 && (
+          <Pagination
+            count={totalPages}
+            page={currentPage}
+            onChange={handlePageChange}
+            variant="outlined"
+            color="primary"
+            size="large"
+          />
+        )}
       </div>
       <Footer />
     </div>

@@ -14,7 +14,7 @@ body {
   background-color: var(--primary-color);
   margin: auto;
   padding: 16px 32px;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid var(--accent-color);
 }
 
 footer {
@@ -176,4 +176,22 @@ footer p {
   gap: 1rem;
   margin-top: 1rem;
   margin-left: 1rem;
+}
+
+.filter-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  background-color: var(--primary-color);
+  padding: 1rem;
+}
+
+.filter-container .MuiFormControl-root {
+  flex: 1;
+}
+
+.filter-container .MuiFormControl-root:first-child {
+  margin-right: 16px;
 }
