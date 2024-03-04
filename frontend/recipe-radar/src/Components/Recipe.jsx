@@ -17,10 +17,10 @@ export default function Recipe({ meal, onDelete, onEdit }) {
       try {
         const URL = variables.API_URL + "recipeImage/" + meal.id;
         const image = await getRecipeImageById(URL);
-        console.log("Image Blob:", image);
+        // console.log("Image Blob:", image);
         if (image) {
           const imageUrl = window.URL.createObjectURL(image);
-          console.log("Image URL:", imageUrl);
+          // console.log("Image URL:", imageUrl);
           setImageUrl(imageUrl);
         }
       } catch (error) {

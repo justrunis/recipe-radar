@@ -135,6 +135,22 @@ export default function Home() {
     const index = allRecipes.findIndex((r) => r.id === recipe.id);
     const updatedRecipes = [...allRecipes];
     updatedRecipes[index] = result.result;
+
+    const formData = new FormData();
+    formData.append("file", recipe.image);
+    formData.append("recipeId", recipe.id);
+
+    try {
+      const res = await axios.post(variables.API_URL + "saveImage", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(res);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
     setAllRecipes(updatedRecipes);
     toast.success("Recipe updated successfully!");
   }
