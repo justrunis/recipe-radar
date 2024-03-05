@@ -20,7 +20,7 @@ export default function Recipe({ meal, onDelete, onEdit }) {
         // console.log("Image Blob:", image);
         if (image) {
           const imageUrl = window.URL.createObjectURL(image);
-          // console.log("Image URL:", imageUrl);
+          console.log("Image URL:", imageUrl);
           setImageUrl(imageUrl);
         }
       } catch (error) {
@@ -41,37 +41,35 @@ export default function Recipe({ meal, onDelete, onEdit }) {
   };
 
   return (
-    <div className=" col-4 px-2">
-      <div className="meal-container">
-        <h2 className="meal-name">{meal.name}</h2>
-        <img
-          className="meal-image"
-          src={imageUrl || "./images/default-image.png"}
-          alt={`${meal.name} image`}
-        />
-        <div className="meal-detail-container">
-          <h4 className="meal-category">Meal category: {meal.category}</h4>
-        </div>
-        <RecipeInformation
-          ingredients={meal.ingredients}
-          instructions={meal.instructions}
-        />
-        <h2 className="meal-category">Difficulty</h2>
-        <Rating value={meal.difficulty} disabled />
-        <div className="button-container">
-          <AddRecipeModal mode="edit" recipe={meal} onEdit={onEdit} />
-          <Button
-            variant="contained"
-            style={{
-              textTransform: "uppercase",
-              color: "#fff",
-              backgroundColor: "#dc3545",
-            }}
-            onClick={() => deleteRecipe(meal.id, meal.name)}
-          >
-            Remove
-          </Button>
-        </div>
+    <div className="meal-container">
+      <h2 className="meal-name">{meal.name}</h2>
+      <img
+        className="meal-image"
+        src={imageUrl || "./images/default-image.png"}
+        alt={`${meal.name} image`}
+      />
+      <div className="meal-detail-container">
+        <h4 className="meal-category">Meal category: {meal.category}</h4>
+      </div>
+      <RecipeInformation
+        ingredients={meal.ingredients}
+        instructions={meal.instructions}
+      />
+      <h2 className="meal-category">Difficulty</h2>
+      <Rating value={meal.difficulty} disabled />
+      <div className="button-container">
+        <AddRecipeModal mode="edit" recipe={meal} onEdit={onEdit} />
+        <Button
+          variant="contained"
+          style={{
+            textTransform: "uppercase",
+            color: "#fff",
+            backgroundColor: "#dc3545",
+          }}
+          onClick={() => deleteRecipe(meal.id, meal.name)}
+        >
+          Remove
+        </Button>
       </div>
     </div>
   );

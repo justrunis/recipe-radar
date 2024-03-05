@@ -12,20 +12,21 @@ import AddIcon from "@mui/icons-material/Add";
 import { variables } from "../Variables";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import { saveAs } from "file-saver";
 import Rating from "@mui/material/Rating";
-import { red } from "@mui/material/colors";
 
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: 800,
   bgcolor: "background.paper",
   border: "2px solid #000",
+  borderRadius: 2,
   boxShadow: 24,
   p: 4,
+  maxHeight: "80vh",
+  overflowY: "auto",
 };
 
 const defaultIngredients = [
@@ -55,7 +56,6 @@ export default function AddRecipeModal({
         })
       : defaultIngredients
   );
-  // console.log(recipe);
   const [instructions, setInstructions] = useState(
     recipe
       ? recipe.instructions
@@ -76,8 +76,6 @@ export default function AddRecipeModal({
       setRecipeName(recipe.name);
       setDifficulty(recipe.difficulty);
       setRecipeCategory(recipe.category);
-      // setIngredients(recipe.ingredients);
-      // setInstructions(recipe.instructions);
     }
   }, [mode, recipe]);
 
@@ -151,6 +149,23 @@ export default function AddRecipeModal({
       }
     }
 
+    setShowError({
+      name: !recipeName.length,
+      category: !recipeCategory.length,
+      instructions: !instructions.length,
+    });
+
+    setIngredients((prevIngredients) => {
+      const updatedIngredients = prevIngredients.map((ingredient) => ({
+        ...ingredient,
+        error: {
+          name: !ingredient.name.length,
+          amount: !ingredient.amount.length,
+        },
+      }));
+      return updatedIngredients;
+    });
+
     if (hasError) return;
     if (mode === "edit") {
       onEdit({
@@ -218,6 +233,7 @@ export default function AddRecipeModal({
             )}
           </FormControl>
           <FormControl fullWidth margin="dense">
+            <label htmlFor="recipe-image-input">Recipe Image</label>
             <Input
               id="recipe-image-input"
               type="file"
@@ -248,7 +264,7 @@ export default function AddRecipeModal({
               </Typography>
             )}
           </FormControl>
-          <Typography variant="subtitle1">Difficulty:</Typography>
+          <label variant="subtitle1">Difficulty:</label>
           <FormControl fullWidth margin="dense">
             <Rating
               name="difficulty"
@@ -258,7 +274,7 @@ export default function AddRecipeModal({
               value={difficulty}
             />
           </FormControl>
-          <Typography variant="subtitle1">Ingredients:</Typography>
+          <label variant="subtitle1">Ingredients:</label>
           {ingredients.map((ingredient, index) => (
             <div key={index} style={{ display: "flex", gap: "8px" }}>
               <FormControl fullWidth margin="dense">
@@ -322,7 +338,7 @@ export default function AddRecipeModal({
             <Input
               id="instructions-input"
               multiline
-              rows={4}
+              rows={6}
               value={instructions}
               onChange={handleInstructionsChange}
             />

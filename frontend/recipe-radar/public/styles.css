@@ -6,7 +6,7 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: "Anta", sans-serif;
   background-image: url("./images/background-image.png");
 }
 
@@ -35,6 +35,8 @@ footer p {
 
 .recipes-container {
   display: flex;
+  justify-content: center;
+  gap: 2rem;
   padding: 20px;
   position: relative;
 }
@@ -60,6 +62,7 @@ footer p {
   padding: 20px;
   background-color: white;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  flex: 1; /* Added property */
 }
 
 .meal-detail-container {
@@ -180,18 +183,29 @@ footer p {
 
 .filter-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-wrap: wrap;
-  gap: 16px;
+  align-items: center;
+  gap: 2rem;
   background-color: var(--primary-color);
   padding: 1rem;
 }
 
-.filter-container .MuiFormControl-root {
-  flex: 1;
+.filter-container #recipe-category-input-filter {
+  width: 100%;
 }
 
-.filter-container .MuiFormControl-root:first-child {
-  margin-right: 16px;
+@media (max-width: 992px) {
+  .meal-container {
+    width: 100%;
+  }
+
+  .recipes-container {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .filter-container {
+    display: block;
+  }
 }

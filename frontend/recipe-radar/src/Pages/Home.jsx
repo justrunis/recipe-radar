@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Header from "../Components/Header";
 import Recipe from "../Components/Recipe";
 import Footer from "../Components/Footer";
@@ -6,18 +6,12 @@ import { Pagination } from "@mui/material";
 import AddRecipeModal from "./AddRecipeModal";
 import { toast } from "react-toastify";
 import {
-  makeGetRequest,
   makePostRequest,
   makeDeleteRequest,
   makePatchRequest,
 } from "../Helpers/databaseRequests";
 import axios from "axios";
 import { variables } from "../Variables";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import Rating from "@mui/material/Rating";
 import RecipeFilters from "../Components/RecipeFilters";
 import { useQuery } from "react-query";
 import { queryClient } from "../App";
@@ -30,7 +24,7 @@ const invalidate = async () => {
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 1;
+  const itemsPerPage = 3;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const [filter, setFilter] = useState({
@@ -70,12 +64,6 @@ export default function Home() {
   const handlePageChange = (event, page) => {
     setCurrentPage(page);
   };
-
-  async function getAllRecipes() {
-    const URL = variables.API_URL + "getAllRecipes";
-    const data = await makeGetRequest(URL);
-    return data;
-  }
 
   async function AddRecipe(
     recipeName,
@@ -139,7 +127,6 @@ export default function Home() {
       console.error("Error:", error);
     }
 
-    // setAllRecipes([...allRecipes, result.result]);
     invalidate();
 
     toast.success(`${recipeName} recipe added successfully!`);
@@ -149,8 +136,6 @@ export default function Home() {
     const URL = variables.API_URL + "deleteRecipe/" + id;
     const response = await makeDeleteRequest(URL);
     if (response) {
-      // const updatedRecipes = allRecipes.filter((recipe) => recipe.id !== id);
-      // setAllRecipes(updatedRecipes);
       invalidate();
       toast.success("Recipe deleted successfully!");
     }
@@ -177,16 +162,17 @@ export default function Home() {
       console.error("Error:", error);
     }
 
-    // setAllRecipes(updatedRecipes);
     invalidate();
     toast.success("Recipe updated successfully!");
   }
 
   async function handleCategoryFilterChange(event) {
+    setCurrentPage(1);
     setFilter({ ...filter, category: event.target.value });
   }
 
   async function handleDifficultyFilterChange(event) {
+    setCurrentPage(1);
     setFilter({
       ...filter,
       difficulty:
@@ -195,6 +181,7 @@ export default function Home() {
   }
 
   async function handleSearchFilterChange(event) {
+    setCurrentPage(1);
     setFilter({ ...filter, search: event.target.value });
   }
 

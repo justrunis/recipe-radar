@@ -14,6 +14,11 @@ export const variables = {
     { strCategory: "Starter" },
     { strCategory: "Vegan" },
     { strCategory: "Vegetarian" },
+    { strCategory: "Soup" },
+    { strCategory: "Salad" },
+    { strCategory: "Bread" },
+    { strCategory: "Pizza" },
+    { strCategory: "Sandwich" },
   ],
   API_URL: "http://localhost:4000/",
 };
