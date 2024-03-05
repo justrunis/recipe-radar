@@ -14,21 +14,6 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Rating from "@mui/material/Rating";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 800,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  borderRadius: 2,
-  boxShadow: 24,
-  p: 4,
-  maxHeight: "80vh",
-  overflowY: "auto",
-};
-
 const defaultIngredients = [
   { name: "", amount: "", type: "", error: { name: false, amount: false } },
 ];
@@ -198,8 +183,8 @@ export default function AddRecipeModal({
 
   return (
     <>
-      <Button
-        className={mode === "edit" ? "" : "ml-3 mt-3"}
+      <button
+        className={mode === "edit" ? "edit-button" : "ml-3 mt-3 add-button"}
         style={{
           textTransform: "uppercase",
           marginLeft: mode === "edit" ? "0" : "1.5rem",
@@ -208,15 +193,15 @@ export default function AddRecipeModal({
         onClick={handleOpen}
       >
         {mode === "edit" ? "Edit" : "Add recipe"}
-      </Button>
+      </button>
       <Modal
         open={open}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
-          <Typography variant="h6" component="h2">
+        <Box className="modal-container">
+          <Typography variant="h4" component="h2">
             Add Recipe
           </Typography>
           <FormControl fullWidth margin="dense">
@@ -264,7 +249,7 @@ export default function AddRecipeModal({
               </Typography>
             )}
           </FormControl>
-          <label variant="subtitle1">Difficulty:</label>
+          <label htmlFor="recipe-difficulty-image">Difficulty:</label>
           <FormControl fullWidth margin="dense">
             <Rating
               name="difficulty"
@@ -274,7 +259,7 @@ export default function AddRecipeModal({
               value={difficulty}
             />
           </FormControl>
-          <label variant="subtitle1">Ingredients:</label>
+          <label htmlFor="recipe-ingredients-input">Ingredients:</label>
           {ingredients.map((ingredient, index) => (
             <div key={index} style={{ display: "flex", gap: "8px" }}>
               <FormControl fullWidth margin="dense">

@@ -5,6 +5,7 @@ import AddRecipeModal from "../Pages/AddRecipeModal";
 import Button from "@mui/material/Button";
 import { getRecipeImageById } from "../Helpers/databaseRequests";
 import { variables } from "../Variables";
+import RecipeImage from "./RecipeImage";
 
 export default function Recipe({ meal, onDelete, onEdit }) {
   const [imageUrl, setImageUrl] = useState(null);
@@ -41,13 +42,9 @@ export default function Recipe({ meal, onDelete, onEdit }) {
   };
 
   return (
-    <div className="meal-container">
+    <article className="meal-container">
       <h2 className="meal-name">{meal.name}</h2>
-      <img
-        className="meal-image"
-        src={imageUrl || "./images/default-image.png"}
-        alt={`${meal.name} image`}
-      />
+      <RecipeImage meal={meal} imageUrl={imageUrl} />
       <div className="meal-detail-container">
         <h4 className="meal-category">Meal category: {meal.category}</h4>
       </div>
@@ -59,18 +56,14 @@ export default function Recipe({ meal, onDelete, onEdit }) {
       <Rating value={meal.difficulty} disabled />
       <div className="button-container">
         <AddRecipeModal mode="edit" recipe={meal} onEdit={onEdit} />
-        <Button
+        <button
           variant="contained"
-          style={{
-            textTransform: "uppercase",
-            color: "#fff",
-            backgroundColor: "#dc3545",
-          }}
+          className="remove-button"
           onClick={() => deleteRecipe(meal.id, meal.name)}
         >
           Remove
-        </Button>
+        </button>
       </div>
-    </div>
+    </article>
   );
 }

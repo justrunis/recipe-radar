@@ -186,36 +186,38 @@ export default function Home() {
   }
 
   return (
-    <div>
+    <>
       <Header />
-      <RecipeFilters
-        filter={filter}
-        onCategoryChange={handleCategoryFilterChange}
-        onDifficultyChange={handleDifficultyFilterChange}
-        onSearchChange={handleSearchFilterChange}
-      />
-      <AddRecipeModal
-        onSave={(recipe) =>
-          AddRecipe(
-            recipe.recipeName,
-            recipe.difficulty,
-            recipe.image,
-            recipe.recipeCategory,
-            recipe.ingredients,
-            recipe.instructions
-          )
-        }
-      />
-      <div className="recipes-container">
-        {currentRecipes.map((meal) => (
-          <Recipe
-            key={meal.id}
-            meal={meal}
-            onDelete={(id) => deleteRecipe(id)}
-            onEdit={(recipe) => editRecipe(recipe)}
-          />
-        ))}
-      </div>
+      <main>
+        <RecipeFilters
+          filter={filter}
+          onCategoryChange={handleCategoryFilterChange}
+          onDifficultyChange={handleDifficultyFilterChange}
+          onSearchChange={handleSearchFilterChange}
+        />
+        <AddRecipeModal
+          onSave={(recipe) =>
+            AddRecipe(
+              recipe.recipeName,
+              recipe.difficulty,
+              recipe.image,
+              recipe.recipeCategory,
+              recipe.ingredients,
+              recipe.instructions
+            )
+          }
+        />
+        <div className="recipes-container">
+          {currentRecipes.map((meal) => (
+            <Recipe
+              key={meal.id}
+              meal={meal}
+              onDelete={(id) => deleteRecipe(id)}
+              onEdit={(recipe) => editRecipe(recipe)}
+            />
+          ))}
+        </div>
+      </main>
       <div className="pager">
         {totalPages > 1 && (
           <Pagination
@@ -229,6 +231,6 @@ export default function Home() {
         )}
       </div>
       <Footer />
-    </div>
+    </>
   );
 }
