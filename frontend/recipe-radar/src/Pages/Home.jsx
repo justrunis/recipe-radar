@@ -58,7 +58,7 @@ export default function Home() {
           },
         }
       ).then((res) => res.json()),
-    staleTime: 100000000000,
+    staleTime: 10 * (60 * 1000), // 10 mins
   });
   if (!allRecipes) {
     allRecipes = [];
