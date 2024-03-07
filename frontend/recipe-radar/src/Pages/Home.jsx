@@ -216,6 +216,11 @@ export default function Home() {
               onEdit={(recipe) => editRecipe(recipe)}
             />
           ))}
+          {currentRecipes.length === 0 && (
+            <div className="no-recipes">
+              <h2>No recipes found!</h2>
+            </div>
+          )}
         </div>
       </main>
       <div className="pager">
