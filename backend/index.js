@@ -9,12 +9,16 @@ import pg from "pg";
 import fileUpload from "express-fileupload";
 const { Pool } = pg;
 import fs from "fs";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 dotenv.config();
 
 const app = express();
 const port = 4000;
 const __dirname = path.resolve();
+const saltRounds = 10;
+const tokenExpirationTime = "24h";
 
 const storage = multer.diskStorage({
   destination: (req, file, callBack) => {
@@ -292,6 +296,99 @@ app.get("/recipeImage/:id", async (req, res) => {
     image.rows[0]?.filepath || "/images/default/default-image.png";
   console.log(`${__dirname}${imagePath}`);
   res.sendFile(`${__dirname}${imagePath}`);
+});
+
+/// REGISTRATION
+
+// Check if email exists
+const emailExists = async (email) => {
+  const data = await query("SELECT * FROM users WHERE email=$1", [email]);
+
+  if (data.rowCount == 0) return false;
+  return data.rows[0];
+};
+
+// Check if username exists
+const usernameExists = async (username) => {
+  const data = await query("SELECT * FROM users WHERE username=$1", [username]);
+
+  if (data.rowCount == 0) return false;
+  return data.rows[0];
+};
+
+// Check if password matches
+async function matchPassword(password, hashedPassword) {
+  const match = await bcrypt.compare(password, hashedPassword);
+  return match;
+}
+
+// Create user
+async function createUser(username, email, password) {
+  const salt = await bcrypt.genSalt(saltRounds);
+  const hashedPassword = await bcrypt.hash(password, salt);
+  const currentTime = new Date().toISOString();
+  const defaultRole = "user";
+
+  const data = await query(
+    "INSERT INTO users (username, email, password, created_at, updated_at, role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id",
+    [username, email, hashedPassword, currentTime, currentTime, defaultRole]
+  );
+
+  if (data.rowCount == 0) return false;
+  return data.rows[0];
+}
+
+function generateJWTToken(user) {
+  const token = jwt.sign(
+    {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: tokenExpirationTime }
+  );
+  return token;
+}
+
+async function getUserById(id) {
+  const data = await query("SELECT * FROM users WHERE id=$1", [id]);
+  if (data.rowCount == 0) return false;
+  return data.rows[0];
+}
+
+app.post("/register", async (req, res) => {
+  const { username, email, password } = req.body;
+  console.log(req.body);
+  if (await emailExists(email)) {
+    return res.status(400).json({ error: "Email already exists" });
+  }
+  if (await usernameExists(username)) {
+    return res.status(400).json({ error: "Username already exists" });
+  }
+  const user = await createUser(username, email, password);
+  if (!user) {
+    return res.status(500).json({ error: "Failed to register user" });
+  }
+  res.status(201).json({ message: "User registered successfully" });
+});
+
+app.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+  const user = await usernameExists(username);
+
+  const meesageText = "Invalid username or password";
+  if (!user) return res.status(400).json({ error: meesageText });
+
+  const isMatch = await matchPassword(password, user.password);
+  if (!isMatch) return res.status(400).json({ error: meesageText });
+  console.log(user);
+
+  const token = generateJWTToken(user);
+  console.log(token);
+
+  res.json({ message: "Logged in successfully", token: token });
 });
 
 app.listen(port, () => {

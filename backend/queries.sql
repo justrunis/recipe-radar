@@ -30,6 +30,16 @@ CREATE TABLE IF NOT EXISTS images (
   size INTEGER NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  role VARCHAR(20) DEFAULT 'user',
+  password VARCHAR(100) NOT NULL
+);
+
 -- Inserting recipe details
 INSERT INTO recipes (name, category, difficulty) 
 VALUES ('Spaghetti Carbonara', 'Pasta', 1);
