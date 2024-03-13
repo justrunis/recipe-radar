@@ -11,6 +11,7 @@ const { Pool } = pg;
 import fs from "fs";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import auth from "./auth/auth.js";
 
 dotenv.config();
 

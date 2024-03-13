@@ -13,7 +13,7 @@ import { validateLoginData } from "../Helpers/validationUtils";
 import { makePostRequest } from "../Helpers/databaseRequests";
 import { variables } from "../Variables";
 
-export default function Login() {
+export default function Login({ handleLogin }) {
   const [loginData, setLoginData] = useState({
     username: "",
     password: "",
@@ -102,6 +102,9 @@ export default function Login() {
               <Typography color="error">{showError.password}</Typography>
             )}
           </FormControl>
+          {loginData.error && (
+            <Typography color="error">{loginData.error}</Typography>
+          )}
           <button
             type="submit"
             variant="contained"

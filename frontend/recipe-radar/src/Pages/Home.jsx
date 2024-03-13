@@ -22,7 +22,7 @@ const invalidate = async () => {
   });
 };
 
-export default function Home() {
+export default function Home({ token }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 3;
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -187,7 +187,7 @@ export default function Home() {
 
   return (
     <>
-      <Header />
+      <Header token={token} />
       <main>
         <RecipeFilters
           filter={filter}
