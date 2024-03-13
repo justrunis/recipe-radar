@@ -21,4 +21,5 @@ export const variables = {
     { strCategory: "Sandwich" },
   ],
   API_URL: "http://localhost:4000/",
+  SUPER_ROLE: "admin",
 };

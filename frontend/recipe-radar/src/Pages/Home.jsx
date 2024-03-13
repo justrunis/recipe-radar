@@ -15,6 +15,7 @@ import { variables } from "../Variables";
 import RecipeFilters from "../Components/RecipeFilters";
 import { useQuery } from "react-query";
 import { queryClient } from "../App";
+import { getUserId, getUserRole } from "../Auth/auth";
 
 const invalidate = async () => {
   await queryClient.invalidateQueries({
@@ -31,10 +32,22 @@ export default function Home({ token }) {
     category: "",
     difficulty: 0,
     search: "",
+    user_id: 0,
   });
 
+  const [buttonTitle, setButtonTitle] = useState("My Recipes");
+
+  const userRole = getUserRole(token);
+  const currentUserId = getUserId(token);
+
   let { data: allRecipes } = useQuery({
-    queryKey: ["allRecipes", filter.category, filter.difficulty, filter.search],
+    queryKey: [
+      "allRecipes",
+      filter.category,
+      filter.difficulty,
+      filter.search,
+      filter.user_id,
+    ],
     queryFn: () =>
       fetch(
         variables.API_URL +
@@ -43,6 +56,7 @@ export default function Home({ token }) {
             category: filter.category,
             difficulty: filter.difficulty,
             search: filter.search,
+            user_id: filter.user_id,
           }),
         {
           method: "GET",
@@ -95,20 +109,11 @@ export default function Home({ token }) {
       return;
     }
 
-    try {
-      const res = await axios.post(variables.API_URL + "saveImage", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-    } catch (error) {
-      console.error("Error:", error);
-    }
-
     const URL = variables.API_URL + "addRecipe";
     const result = await makePostRequest(URL, {
       name: recipeName,
       difficulty: recipeDifficulty,
+      currentUserId: currentUserId,
       category: recipeCategory,
       ingredients: ingredients,
       instructions: instructions,
@@ -139,6 +144,7 @@ export default function Home({ token }) {
       invalidate();
       toast.success("Recipe deleted successfully!");
     }
+    setCurrentPage(1);
   }
 
   async function editRecipe(recipe) {
@@ -185,6 +191,17 @@ export default function Home({ token }) {
     setFilter({ ...filter, search: event.target.value });
   }
 
+  async function handleMyRecipes(event) {
+    setCurrentPage(1);
+    setButtonTitle(buttonTitle === "My Recipes" ? "All Recipes" : "My Recipes");
+    if (filter.user_id === currentUserId) {
+      setFilter({ ...filter, user_id: 0 });
+      return;
+    } else {
+      setFilter({ ...filter, user_id: currentUserId });
+    }
+  }
+
   return (
     <>
       <Header token={token} />
@@ -195,18 +212,25 @@ export default function Home({ token }) {
           onDifficultyChange={handleDifficultyFilterChange}
           onSearchChange={handleSearchFilterChange}
         />
-        <AddRecipeModal
-          onSave={(recipe) =>
-            AddRecipe(
-              recipe.recipeName,
-              recipe.difficulty,
-              recipe.image,
-              recipe.recipeCategory,
-              recipe.ingredients,
-              recipe.instructions
-            )
-          }
-        />
+        {userRole === variables.SUPER_ROLE || userRole === "user" ? (
+          <>
+            <AddRecipeModal
+              onSave={(recipe) =>
+                AddRecipe(
+                  recipe.recipeName,
+                  recipe.difficulty,
+                  recipe.image,
+                  recipe.recipeCategory,
+                  recipe.ingredients,
+                  recipe.instructions
+                )
+              }
+            />
+            <button className="mx-3 mt-3 edit-button" onClick={handleMyRecipes}>
+              {buttonTitle}
+            </button>
+          </>
+        ) : null}
         <div className="recipes-container">
           {currentRecipes.map((meal) => (
             <Recipe

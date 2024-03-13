@@ -25,7 +25,7 @@ export function AuthVerify(token) {
 
 export function getUserEmail(token) {
   const decodedToken = parseJwt(token);
-  return decodedToken.userEmail;
+  return decodedToken.email;
 }
 
 export function getUserId(token) {
@@ -33,7 +33,7 @@ export function getUserId(token) {
     return;
   }
   const decodedToken = parseJwt(token);
-  return decodedToken.userId;
+  return decodedToken.id;
 }
 
 export function getUserRole(token) {
@@ -41,7 +41,7 @@ export function getUserRole(token) {
     return;
   }
   const decodedToken = parseJwt(token);
-  return decodedToken.userRole;
+  return decodedToken.role;
 }
 
 export function getUsername(token) {

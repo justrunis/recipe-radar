@@ -87,7 +87,7 @@ export default function AddRecipeModal({
   };
 
   const handleRatingChange = (event) => {
-    setDifficulty(event.target.value);
+    setDifficulty(+event.target.value);
   };
 
   const handleCategoryChange = (event) => {

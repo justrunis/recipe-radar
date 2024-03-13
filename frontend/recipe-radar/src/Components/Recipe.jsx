@@ -6,22 +6,24 @@ import Button from "@mui/material/Button";
 import { getRecipeImageById } from "../Helpers/databaseRequests";
 import { variables } from "../Variables";
 import RecipeImage from "./RecipeImage";
+import { getUserRole, getUserId } from "../Auth/auth";
 
 export default function Recipe({ meal, onDelete, onEdit }) {
   const [imageUrl, setImageUrl] = useState(null);
-  const [error, setError] = useState(null);
+
+  const userRole = getUserRole(localStorage.getItem("jwtToken"));
+  const currentUserId = getUserId(localStorage.getItem("jwtToken"));
 
   useEffect(() => {
     if (!meal || !meal.id) return;
+    console.log(meal);
 
     const fetchImage = async () => {
       try {
         const URL = variables.API_URL + "recipeImage/" + meal.id;
         const image = await getRecipeImageById(URL);
-        // console.log("Image Blob:", image);
         if (image) {
           const imageUrl = window.URL.createObjectURL(image);
-          console.log("Image URL:", imageUrl);
           setImageUrl(imageUrl);
         }
       } catch (error) {
@@ -42,7 +44,7 @@ export default function Recipe({ meal, onDelete, onEdit }) {
   };
 
   return (
-    <article className="meal-container">
+    <article className="meal-container col-4">
       <h2 className="meal-name">{meal.name}</h2>
       <RecipeImage meal={meal} imageUrl={imageUrl} />
       <div className="meal-detail-container">
@@ -54,16 +56,18 @@ export default function Recipe({ meal, onDelete, onEdit }) {
       />
       <h2 className="meal-category">Difficulty</h2>
       <Rating value={meal.difficulty} disabled />
-      <div className="button-container">
-        <AddRecipeModal mode="edit" recipe={meal} onEdit={onEdit} />
-        <button
-          variant="contained"
-          className="remove-button"
-          onClick={() => deleteRecipe(meal.id, meal.name)}
-        >
-          Remove
-        </button>
-      </div>
+      {userRole === variables.SUPER_ROLE || currentUserId === meal?.user_id ? (
+        <div className="button-container">
+          <AddRecipeModal mode="edit" recipe={meal} onEdit={onEdit} />
+          <button
+            variant="contained"
+            className="remove-button"
+            onClick={() => deleteRecipe(meal.id, meal.name)}
+          >
+            Remove
+          </button>
+        </div>
+      ) : null}
     </article>
   );
 }

@@ -6,6 +6,8 @@ CREATE TABLE recipes (
     image BYTEA
 );
 
+ALTER TABLE recipes ADD COLUMN user_id INTEGER REFERENCES users(id);
+
 CREATE TABLE ingredients (
     id SERIAL PRIMARY KEY,
     recipe_id INTEGER REFERENCES recipes(id),

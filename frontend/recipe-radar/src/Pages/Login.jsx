@@ -1,19 +1,12 @@
 import Footer from "../Components/Footer";
 import Header from "../Components/Header";
-import {
-  Button,
-  FormControl,
-  Input,
-  InputLabel,
-  Typography,
-} from "@mui/material";
+import { FormControl, Input, InputLabel, Typography } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import { validateLoginData } from "../Helpers/validationUtils";
-import { makePostRequest } from "../Helpers/databaseRequests";
 import { variables } from "../Variables";
 
-export default function Login({ handleLogin }) {
+export default function Login({ onLogin }) {
   const [loginData, setLoginData] = useState({
     username: "",
     password: "",
@@ -25,10 +18,11 @@ export default function Login({ handleLogin }) {
     password: false,
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
 
   function handleLogin() {
-    console.log("Login button clicked");
     setShowError({
       username: "",
       password: "",
@@ -42,19 +36,29 @@ export default function Login({ handleLogin }) {
 
     if (validatedData.isValid) {
       const URL = variables.API_URL + "login";
-      makePostRequest(URL, loginData)
+      setIsLoading(true);
+      fetch(URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loginData),
+      })
         .then((response) => {
-          if (response.error) {
-            console.log(response.error);
-            setLoginData({
-              ...loginData,
-              error: response.error,
-            });
+          if (response.status >= 200 && response.status < 300) {
+            setIsLoading(false);
+            return response.json();
           } else {
-            console.log(response);
-            localStorage.setItem("jwtToken", response.token);
-            navigate("/home");
+            return response.json().then((error) => {
+              setIsLoading(false);
+              throw new Error(error);
+            });
           }
+        })
+        .then((data) => {
+          localStorage.setItem("jwtToken", data.token);
+          onLogin(data.token);
+          navigate("/home");
         })
         .catch((error) => {
           console.error("Error logging in:", error);

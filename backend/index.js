@@ -69,8 +69,7 @@ async function query(sql, params) {
 
 /// get all recipes with ingredients and instructions
 app.get("/getAllRecipes", async (req, res) => {
-  console.log(req.query);
-  const { category, difficulty, search } = req.query;
+  const { category, difficulty, search, user_id } = req.query;
 
   const recipes = await query("SELECT * FROM recipes");
   const ingredients = await query("SELECT * FROM ingredients");
@@ -107,19 +106,30 @@ app.get("/getAllRecipes", async (req, res) => {
       return recipe.name.toLowerCase().includes(searchQuery);
     });
   }
+  if (+user_id) {
+    combinedRecipes = combinedRecipes.filter((recipe) => {
+      return recipe.user_id === +user_id;
+    });
+  }
+  combinedRecipes.sort((a, b) => a.name.localeCompare(b.name));
 
   res.json(combinedRecipes);
 });
 
 app.post("/addRecipe", async (req, res) => {
   try {
-    console.log(req.body);
-    const { name, category, difficulty, image, ingredients, instructions } =
-      req.body;
+    const {
+      name,
+      category,
+      currentUserId,
+      difficulty,
+      ingredients,
+      instructions,
+    } = req.body;
 
     const data = await query(
-      "INSERT INTO recipes (name, category, difficulty) VALUES ($1, $2, $3) RETURNING id",
-      [name, category, difficulty]
+      "INSERT INTO recipes (name, category, difficulty, user_id) VALUES ($1, $2, $3, $4) RETURNING id",
+      [name, category, difficulty, currentUserId]
     );
     const recipeId = data.rows[0].id;
 
@@ -213,7 +223,6 @@ app.patch("/editRecipe", async (req, res) => {
     );
   }
   const newInstructions = instructions.split("\n");
-  console.log(newInstructions);
   await query("DELETE FROM instructions WHERE recipe_id = $1", [id]);
   for (let i = 0; i < newInstructions.length; i++) {
     const instruction = newInstructions[i];
@@ -233,7 +242,6 @@ app.patch("/editRecipe", async (req, res) => {
 
 function removeImageFromFolder(fileName) {
   const imagePath = `${__dirname}/images/${fileName}`;
-  console.log(imagePath);
   fs.unlink(imagePath, (err) => {
     if (err) {
       console.error(err);
@@ -243,9 +251,20 @@ function removeImageFromFolder(fileName) {
 }
 
 /// save image
-app.post("/saveImage", (req, res) => {
-  console.log(req.body.recipeId);
-  console.log(req.files);
+app.post("/saveImage", async (req, res) => {
+  if (req.files === null) {
+    await query(
+      "INSERT INTO images (filename, filepath, mimetype, size, recipe_id) VALUES ($1, $2, $3, $4, $5)",
+      [
+        "default-image.png",
+        `/images/default/default-image.png`,
+        "image/png",
+        0,
+        req.body.recipeId,
+      ]
+    );
+    return res.json({ message: "File saved successfully" });
+  }
   const file = req.files.file; // Assuming the file input field name is "file"
 
   // Move the file to the desired location
@@ -295,8 +314,15 @@ app.get("/recipeImage/:id", async (req, res) => {
   const image = await query("SELECT * FROM images WHERE recipe_id = $1", [id]);
   const imagePath =
     image.rows[0]?.filepath || "/images/default/default-image.png";
-  console.log(`${__dirname}${imagePath}`);
   res.sendFile(`${__dirname}${imagePath}`);
+});
+
+app.get("/getUser/:id", async (req, res) => {
+  const user = await getUserById(req.params.id);
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+  return res.json(user);
 });
 
 /// REGISTRATION
@@ -356,12 +382,12 @@ function generateJWTToken(user) {
 async function getUserById(id) {
   const data = await query("SELECT * FROM users WHERE id=$1", [id]);
   if (data.rowCount == 0) return false;
+  console.log("data", data.rows[0]);
   return data.rows[0];
 }
 
 app.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
-  console.log(req.body);
   if (await emailExists(email)) {
     return res.status(400).json({ error: "Email already exists" });
   }
@@ -384,10 +410,8 @@ app.post("/login", async (req, res) => {
 
   const isMatch = await matchPassword(password, user.password);
   if (!isMatch) return res.status(400).json({ error: meesageText });
-  console.log(user);
 
   const token = generateJWTToken(user);
-  console.log(token);
 
   res.json({ message: "Logged in successfully", token: token });
 });

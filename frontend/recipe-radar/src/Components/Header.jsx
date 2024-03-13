@@ -16,7 +16,7 @@ export default function Header({ token }) {
   return (
     <header>
       <Navbar className="header" expand="lg">
-        <Navbar.Brand href="/">
+        <Navbar.Brand href="/home">
           Recipe Radar <RadarIcon />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -38,6 +38,7 @@ export default function Header({ token }) {
           <Nav className="ml-auto">
             {token && (
               <>
+                <Nav.Link href="/profile">Profile</Nav.Link>
                 <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
               </>
             )}

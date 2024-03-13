@@ -56,6 +56,11 @@ export function validateRegistrationData(data) {
   return { formErrors, isValid };
 }
 
+/* Validates the login data.
+ *
+ * @param {*} data - The login data to be validated.
+ * @returns {Object} - An object containing the form errors and a boolean indicating the validity of the data.
+ */
 export function validateLoginData(data) {
   const formErrors = {
     username: "",
@@ -74,4 +79,45 @@ export function validateLoginData(data) {
   }
 
   return { formErrors, isValid };
+}
+
+export function validateRecipeData(
+  recipeName,
+  recipeDifficulty,
+  recipeImage,
+  recipeCategory,
+  ingredients,
+  instructions
+) {
+  instructions = instructions.split("\n");
+
+  const formData = new FormData();
+  formData.append("file", recipeImage);
+
+  if (recipeName === "") {
+    return {
+      formErrors: { recipeName: "Please enter a recipe name!" },
+      isValid: false,
+    };
+  }
+  if (recipeCategory === "") {
+    return {
+      formErrors: { recipeCategory: "Please select a category!" },
+      isValid: false,
+    };
+  }
+  if (ingredients.length <= 0) {
+    return {
+      formErrors: { ingredients: "Please provide at least one ingredient!" },
+      isValid: false,
+    };
+  }
+  if (instructions.length <= 0) {
+    return {
+      formErrors: { instructions: "Please provide at least one instruction!" },
+      isValid: false,
+    };
+  }
+
+  return { formErrors: {}, isValid: true };
 }
