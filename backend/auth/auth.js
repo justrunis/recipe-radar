@@ -8,10 +8,11 @@ export default async (request, response, next) => {
     const token = await request.headers.authorization.split(" ")[1];
 
     //check if the token matches the supposed origin
-    const decodedToken = await jwt.verify(token, process.env.TOKEN_PUBLIC_KEY);
+    const decodedToken = await jwt.verify(token, process.env.JWT_SECRET);
 
     // retrieve the user details of the logged in user
     const user = await decodedToken;
+    console.log("THIS IS MY TOKEN USER ", user);
 
     // pass the user down to the endpoints here
     request.user = user;

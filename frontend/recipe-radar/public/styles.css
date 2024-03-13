@@ -304,7 +304,8 @@ footer p {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 2rem;
+  padding: 20px;
   background-image: url("./images/food-background-image.jpg");
   height: 100vh;
 }

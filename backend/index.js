@@ -68,7 +68,12 @@ async function query(sql, params) {
 }
 
 /// get all recipes with ingredients and instructions
-app.get("/getAllRecipes", async (req, res) => {
+app.get("/getAllRecipes", auth, async (req, res) => {
+  const user = req.user;
+  if (!user) {
+    return res.status(401).json({ error: "Invalid request!" });
+  }
+
   const { category, difficulty, search, user_id } = req.query;
 
   const recipes = await query("SELECT * FROM recipes");
@@ -116,7 +121,12 @@ app.get("/getAllRecipes", async (req, res) => {
   res.json(combinedRecipes);
 });
 
-app.post("/addRecipe", async (req, res) => {
+app.post("/addRecipe", auth, async (req, res) => {
+  // get user from token
+  const user = req.user;
+  if (!user) {
+    return res.status(401).json({ error: "Invalid request!" });
+  }
   try {
     const {
       name,
@@ -164,8 +174,14 @@ app.post("/addRecipe", async (req, res) => {
   }
 });
 
-app.delete("/deleteRecipe/:id", async (req, res) => {
+app.delete("/deleteRecipe/:id", auth, async (req, res) => {
+  // get user from token
   const id = req.params.id;
+  const recipe = await getRecipeById(req.params.id);
+  const user = req.user;
+  if (user.id !== recipe.user_id && user.role !== "admin") {
+    return res.status(401).json({ error: "Invalid request!" });
+  }
 
   // Delete ingredients
   await query("DELETE FROM ingredients WHERE recipe_id = $1", [id]);
@@ -206,8 +222,15 @@ async function getRecipeById(id) {
   return combinedRecipe;
 }
 
-app.patch("/editRecipe", async (req, res) => {
+app.patch("/editRecipe", auth, async (req, res) => {
   const id = req.body.id;
+  const recipe = await getRecipeById(id);
+  // get user from token
+  const user = req.user;
+  if (user.id !== recipe.user_id && user.role !== "admin") {
+    return res.status(401).json({ error: "Invalid request!" });
+  }
+
   const { recipeName, recipeCategory, difficulty, ingredients, instructions } =
     req.body;
   await query(

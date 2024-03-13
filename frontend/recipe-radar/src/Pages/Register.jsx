@@ -8,6 +8,7 @@ import {
   InputLabel,
   Input,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import { validateRegistrationData } from "../Helpers/validationUtils";
 import { makePostRequest } from "../Helpers/databaseRequests";
@@ -29,6 +30,8 @@ export default function Register() {
     email: false,
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
 
   async function handleRegistration() {
@@ -48,17 +51,21 @@ export default function Register() {
     if (validatedData.isValid) {
       try {
         const URL = variables.API_URL + "register";
+        setIsLoading(true);
         const response = await makePostRequest(URL, registrationData);
         if (response.error) {
+          setIsLoading(false);
           setRegistrationData({
             ...registrationData,
             error: response.error,
           });
         } else {
+          setIsLoading(false);
           // Redirect to login page
           navigate("/login");
         }
       } catch (error) {
+        setIsLoading(false);
         console.error("Error registering user:", error);
         setRegistrationData({
           ...registrationData,
@@ -66,6 +73,7 @@ export default function Register() {
         });
       }
     } else {
+      setIsLoading(false);
       setShowError({
         username: validatedData.formErrors.username,
         password: validatedData.formErrors.password,
@@ -79,7 +87,7 @@ export default function Register() {
     <>
       <Header />
       <div className="registration-container">
-        <div className="registration-form" onSubmit={handleRegistration}>
+        <div className="registration-form my-5" onSubmit={handleRegistration}>
           <h2>Register</h2>
           <FormControl>
             <InputLabel htmlFor="username">Username</InputLabel>
@@ -172,8 +180,13 @@ export default function Register() {
             color="primary"
             onClick={handleRegistration}
             className="submit-button"
+            disabled={isLoading}
           >
-            Register
+            {isLoading ? (
+              <CircularProgress size={24} style={{ color: "#ffd700" }} />
+            ) : (
+              "Register"
+            )}
           </button>
           <div>
             Already have an account? <Link to="/login">Login</Link>

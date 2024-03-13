@@ -5,6 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import { validateLoginData } from "../Helpers/validationUtils";
 import { variables } from "../Variables";
+import { CircularProgress } from "@mui/material";
 
 export default function Login({ onLogin }) {
   const [loginData, setLoginData] = useState({
@@ -51,19 +52,24 @@ export default function Login({ onLogin }) {
           } else {
             return response.json().then((error) => {
               setIsLoading(false);
+              console.log("error", error.error);
+              setLoginData({ ...loginData, error: error.error });
               throw new Error(error);
             });
           }
         })
         .then((data) => {
+          setIsLoading(false);
           localStorage.setItem("jwtToken", data.token);
           onLogin(data.token);
           navigate("/home");
         })
         .catch((error) => {
+          setIsLoading(false);
           console.error("Error logging in:", error);
         });
     } else {
+      setIsLoading(false);
       setShowError({
         username: validatedData.formErrors.username,
         password: validatedData.formErrors.password,
@@ -74,7 +80,7 @@ export default function Login({ onLogin }) {
     <>
       <Header />
       <div className="registration-container">
-        <div className="registration-form">
+        <div className="registration-form my-5">
           <h2>Login</h2>
           <FormControl>
             <InputLabel htmlFor="username">Username</InputLabel>
@@ -115,8 +121,13 @@ export default function Login({ onLogin }) {
             color="primary"
             onClick={handleLogin}
             className="submit-button"
+            disabled={isLoading}
           >
-            Login
+            {isLoading ? (
+              <CircularProgress size={24} style={{ color: "#ffd700" }} />
+            ) : (
+              "Login"
+            )}
           </button>
           <div>
             Don't have an account? <Link to="/register">Register</Link>
