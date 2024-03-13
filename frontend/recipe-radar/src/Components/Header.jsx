@@ -2,7 +2,7 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import RadarIcon from "@mui/icons-material/Radar";
 import { useNavigate } from "react-router-dom";
-import { getUserRole } from "../Auth/auth";
+import { getUserRole, getUsername } from "../Auth/auth";
 
 export default function Header({ token }) {
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ export default function Header({ token }) {
           <Nav className="ml-auto">
             {token && (
               <>
-                <Nav.Link href="/profile">Profile</Nav.Link>
+                <Nav.Link href="/profile">{getUsername(token)}</Nav.Link>
                 <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
               </>
             )}

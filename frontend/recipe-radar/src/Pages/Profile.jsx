@@ -55,7 +55,7 @@ export default function Profile({ token }) {
     <>
       <Header token={token} />
       <div className="profile-container">
-        <div className="profile-card">
+        <div className="profile-card mx-2">
           <h2>Profile</h2>
           <table className="profile-table">
             <tbody>
