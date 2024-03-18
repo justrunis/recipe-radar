@@ -62,7 +62,7 @@ export default function Login({ onLogin }) {
           setIsLoading(false);
           localStorage.setItem("jwtToken", data.token);
           onLogin(data.token);
-          navigate("/home");
+          navigate("/");
         })
         .catch((error) => {
           setIsLoading(false);

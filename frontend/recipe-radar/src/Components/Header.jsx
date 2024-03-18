@@ -17,7 +17,7 @@ export default function Header({ token }) {
   return (
     <header>
       <Navbar className="header" expand="lg">
-        <Navbar.Brand href="/home">
+        <Navbar.Brand href="/">
           Recipe Radar <RadarIcon />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -31,7 +31,7 @@ export default function Header({ token }) {
             )}
             {token && (
               <>
-                <Nav.Link href="/home">Home</Nav.Link>
+                <Nav.Link href="/">Home</Nav.Link>
               </>
             )}
             {token && role === "admin" && (

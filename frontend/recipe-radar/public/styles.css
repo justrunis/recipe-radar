@@ -2,7 +2,7 @@
   --primary-color: #ff6347; /* Coral */
   --secondary-color: #8a2be2; /* Blue Violet */
   --accent-color: #ffd700; /* Gold */
-  --text-color: black; /* Black */
+  --text-color: white; /* Black */
 }
 
 #root {
@@ -219,6 +219,10 @@ footer p {
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+}
+
+.add-button {
+  background-color: var(--primary-color);
 }
 
 .edit-button {
