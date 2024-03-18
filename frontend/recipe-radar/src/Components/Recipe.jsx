@@ -16,7 +16,6 @@ export default function Recipe({ meal, onDelete, onEdit }) {
 
   useEffect(() => {
     if (!meal || !meal.id) return;
-    console.log(meal);
 
     const fetchImage = async () => {
       try {

@@ -424,6 +424,47 @@ app.post("/register", async (req, res) => {
   res.status(201).json({ message: "User registered successfully" });
 });
 
+app.get("/getAllUsers", auth, async (req, res) => {
+  const user = req.user;
+  if (!user && user.role !== "admin") {
+    return res.status(401).json({ error: "Invalid request!" });
+  }
+
+  const users = await query(
+    "SELECT id, username, email, created_at, updated_at, role FROM users"
+  );
+  res.json(users.rows);
+});
+
+app.delete("/deleteUser/:id", auth, async (req, res) => {
+  const user = req.user;
+  if (!user && user.role !== "admin") {
+    return res.status(401).json({ error: "Invalid request!" });
+  }
+
+  const id = req.params.id;
+
+  await query("DELETE FROM users WHERE id = $1", [id]);
+  res.json({ message: "User deleted successfully" });
+});
+
+app.patch("/updateUser/:id", auth, async (req, res) => {
+  const user = req.user;
+  if (!user && user.role !== "admin") {
+    return res.status(401).json({ error: "Invalid request!" });
+  }
+  const { id, username, email, role } = req.body;
+
+  const result = await query(
+    "UPDATE users SET username = $1, email = $2, role = $3, updated_at = $4 WHERE id = $5",
+    [username, email, role, new Date().toISOString(), id]
+  );
+  if (result.rowCount == 0) {
+    return res.status(500).json({ error: "Failed to update user" });
+  }
+  return res.json({ message: "User updated successfully" });
+});
+
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
   const user = await usernameExists(username);

@@ -12,7 +12,6 @@ export default async (request, response, next) => {
 
     // retrieve the user details of the logged in user
     const user = await decodedToken;
-    console.log("THIS IS MY TOKEN USER ", user);
 
     // pass the user down to the endpoints here
     request.user = user;

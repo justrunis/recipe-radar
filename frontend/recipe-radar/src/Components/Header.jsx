@@ -7,6 +7,7 @@ import { getUserRole, getUsername } from "../Auth/auth";
 export default function Header({ token }) {
   const navigate = useNavigate();
   const role = getUserRole(token);
+  console.log(role);
 
   function handleLogout() {
     localStorage.removeItem("jwtToken");
@@ -31,6 +32,11 @@ export default function Header({ token }) {
             {token && (
               <>
                 <Nav.Link href="/home">Home</Nav.Link>
+              </>
+            )}
+            {token && role === "admin" && (
+              <>
+                <Nav.Link href="/users">Users</Nav.Link>
               </>
             )}
           </Nav>

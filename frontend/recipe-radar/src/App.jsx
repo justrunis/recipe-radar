@@ -8,8 +8,9 @@ import Register from "./Pages/Register";
 import Login from "./Pages/Login";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import { useState } from "react";
-import { AuthVerify } from "./Auth/auth";
+import { AuthVerify, getUserRole } from "./Auth/auth";
 import Profile from "./Pages/Profile";
+import Users from "./Pages/Users";
 
 export const queryClient = new QueryClient();
 
@@ -30,6 +31,9 @@ function App() {
             <Route path="/" element={<ProtectedRoute token={token} />}>
               <Route path="/home" element={<Home token={token} />} />
               <Route path="profile" element={<Profile token={token} />} />
+              {token && getUserRole(token) === "admin" && (
+                <Route path="/users" element={<Users token={token} />} />
+              )}
             </Route>
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login onLogin={handleLogin} />} />

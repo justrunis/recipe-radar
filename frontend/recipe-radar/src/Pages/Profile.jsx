@@ -1,55 +1,41 @@
 import { getUserId } from "../Auth/auth";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
-import { useEffect } from "react";
 import { variables } from "../Variables";
-import { useState } from "react";
 import { formatDate } from "../Helpers/functions";
+import { useFetch } from "../Hooks/useFetch";
+import { makeGetRequest } from "../Helpers/databaseRequests";
+import Error from "../Components/Error";
+
+const userId = getUserId(localStorage.getItem("jwtToken"));
+console.log(userId);
+
+async function fetchUser() {
+  const user = await makeGetRequest(variables.API_URL + "getUser/" + userId);
+  return new Promise((resolve) => {
+    resolve(user);
+  });
+}
 
 export default function Profile({ token }) {
-  const userId = getUserId(token);
-  console.log("userId", userId);
-  const [user, setUser] = useState({
-    username: "",
-    email: "",
-    role: "",
-    created_at: "",
-  });
+  const {
+    isFetching,
+    fetchedData: user,
+    setFetchedData: setUser,
+    error,
+  } = useFetch(fetchUser, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const URL = variables.API_URL + "getUser/" + userId;
-      try {
-        fetch(URL, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
-          },
-        })
-          .then((response) => {
-            if (response.status >= 200 && response.status < 300) {
-              return response.json();
-            } else {
-              return response.json().then((error) => {
-                throw new Error(error);
-              });
-            }
-          })
-          .then((data) => {
-            console.log("data", data);
-            setUser(data);
-          })
-          .catch((error) => {
-            console.error("Error getting user:", error);
-          });
-      } catch (error) {
-        console.error("Error getting user:", error);
-      }
-    };
-    const test = fetchData();
-    console.log("test", test);
-  }, [userId, token]);
+  if (error) {
+    return (
+      <>
+        <Header token={token} />
+        <div style={{ height: "100vh" }}>
+          <Error title="An error occurred!" message={error.message} />;
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
