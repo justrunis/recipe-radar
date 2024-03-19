@@ -7,12 +7,20 @@ import { getRecipeImageById } from "../Helpers/databaseRequests";
 import { variables } from "../Variables";
 import RecipeImage from "./RecipeImage";
 import { getUserRole, getUserId } from "../Auth/auth";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
+import { red } from "@mui/material/colors";
 
 export default function Recipe({ recipe, onDelete, onEdit }) {
   const [imageUrl, setImageUrl] = useState(null);
 
   const userRole = getUserRole(localStorage.getItem("jwtToken"));
   const currentUserId = getUserId(localStorage.getItem("jwtToken"));
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!recipe || !recipe.id) return;
@@ -33,13 +41,26 @@ export default function Recipe({ recipe, onDelete, onEdit }) {
     fetchImage();
   }, [recipe]);
 
-  const deleteRecipe = async (id, name) => {
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete ${name} recipe?`
-    );
-    if (confirmDelete) {
-      onDelete(id);
-    }
+  // const deleteRecipe = async (id, name) => {
+  //   const confirmDelete = window.confirm(
+  //     `Are you sure you want to delete ${name} recipe?`
+  //   );
+  //   if (confirmDelete) {
+  //     onDelete(id);
+  //   }
+  // };
+
+  const closeConfirmDialog = () => {
+    setConfirmDialogOpen(false);
+  };
+
+  const openConfirmDialog = (recipe) => {
+    setConfirmDialogOpen(true);
+  };
+
+  const confirmRemoveRecipe = () => {
+    onDelete(recipe.id);
+    setConfirmDialogOpen(false);
   };
 
   return (
@@ -62,12 +83,31 @@ export default function Recipe({ recipe, onDelete, onEdit }) {
           <button
             variant="contained"
             className="remove-button"
-            onClick={() => deleteRecipe(recipe.id, recipe.name)}
+            onClick={() => openConfirmDialog(recipe)}
           >
             Remove
           </button>
         </div>
       ) : null}
+
+      <Dialog open={confirmDialogOpen} onClose={closeConfirmDialog}>
+        <DialogTitle>Confirmation</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete
+          {recipe && <span style={{ color: red[500] }}> {recipe.name} </span>}
+          recipe?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeConfirmDialog}>Cancel</Button>
+          <Button
+            onClick={confirmRemoveRecipe}
+            autoFocus
+            style={{ color: red[500] }}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </article>
   );
 }

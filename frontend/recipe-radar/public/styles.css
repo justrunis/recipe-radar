@@ -1,7 +1,7 @@
 :root {
-  --primary-color: #ff6347; /* Coral */
-  --secondary-color: #8a2be2; /* Blue Violet */
-  --accent-color: #ffd700; /* Gold */
+  --primary-color: #ff6347ff; /* Coral */
+  --secondary-color: #8a2be2ff; /* Blue Violet */
+  --accent-color: #ffd700ff; /* Gold */
   --text-color: black; /* Black */
   --white-color: white; /* White */
 }
@@ -191,14 +191,44 @@ footer p {
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  background-color: var(--primary-color);
   padding: 10px 24px;
 }
 
-.MuiPagination-root {
-  button {
-    color: var(--accent-color) !important;
-  }
+.MuiPagination-root button {
+  background-color: var(--primary-color);
+}
+
+.MuiPagination-root button.Mui-selected {
+  background-color: var(--secondary-color);
+}
+
+.MuiPagination-root button.Mui-selected:hover {
+  background-color: var(--accent-color);
+}
+
+.MuiPagination-root button:hover {
+  background-color: var(--accent-color);
+}
+
+.button-container {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  margin-left: 1rem;
+}
+
+.add-button,
+.edit-button,
+.remove-button,
+.submit-button {
+  background-color: var(--accent-color);
+  text-transform: uppercase;
+  color: var(--white-color);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
 }
 
 .button-container {
@@ -390,8 +420,15 @@ footer p {
   gap: 1rem;
 }
 
+.about-card {
+  padding: 5rem;
+  border: 5px solid var(--accent-color);
+  background-color: var(--primary-color) !important;
+}
+
 @media (max-width: 992px) {
-  .recipe-container {
+  .recipe-container,
+  .recipes-container {
     width: 100%;
   }
 
@@ -401,32 +438,22 @@ footer p {
     align-items: center;
   }
 
-  .filter-container {
-    display: block;
-  }
-
-  .registration-container {
-    padding: 0;
-  }
-
-  .registration-form {
-    padding: 2rem;
-  }
-
-  .profile-container {
-    padding: 0;
-  }
-
-  .profile-card {
-    padding: 1rem;
-  }
-
+  .filter-container,
+  .registration-container,
+  .profile-container,
+  .users-table-container,
+  .about-card,
   .profile-table {
     padding: 0;
   }
 
-  .users-table-container {
-    width: 100%;
-    padding: 0;
+  .filter-container {
+    padding: 1rem;
+    flex-direction: column;
+  }
+
+  .registration-form,
+  .profile-card {
+    padding: 2rem;
   }
 }

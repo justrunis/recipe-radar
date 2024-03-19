@@ -15,6 +15,7 @@ import {
   Table,
   TableRow,
   Paper,
+  Pagination,
 } from "@mui/material";
 import {
   Dialog,
@@ -39,7 +40,7 @@ async function fetchAllUsers() {
 export default function Users({ token }) {
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  console.log(selectedUser);
+  const [currentPage, setCurrentPage] = useState(1);
   const [editMode, setEditMode] = useState(false);
 
   const {
@@ -60,6 +61,13 @@ export default function Users({ token }) {
       </>
     );
   }
+
+  const itemsPerPage = 5;
+  const totalPages = Math.ceil(users.length / itemsPerPage);
+  const currentUsers = users.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   function handleUserEdit(user) {
     setSelectedUser(user);
@@ -134,6 +142,10 @@ export default function Users({ token }) {
     }
   }
 
+  function handlePageChange(event, value) {
+    setCurrentPage(value);
+  }
+
   return (
     <>
       <Header token={token} />
@@ -154,7 +166,7 @@ export default function Users({ token }) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {users.map((user) => (
+                {currentUsers.map((user) => (
                   <TableRow
                     key={user.id}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -197,6 +209,16 @@ export default function Users({ token }) {
               </TableBody>
             </Table>
           </TableContainer>
+          <div className="pager">
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              variant="outlined"
+              color="primary"
+              size="large"
+            />
+          </div>
         </div>
       </div>
       <Footer />
@@ -221,6 +243,7 @@ export default function Users({ token }) {
           </Button>
         </DialogActions>
       </Dialog>
+
       {selectedUser && (
         <UserModal
           editedUser={selectedUser}

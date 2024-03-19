@@ -12,6 +12,7 @@ import { AuthVerify, getUserRole } from "./Auth/auth";
 import Profile from "./Pages/Profile";
 import Users from "./Pages/Users";
 import AdminRoute from "./Components/AdminRoute";
+import About from "./Pages/About";
 
 export const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ function App() {
               <Route path="/" element={<Home token={token} />} />
 
               <Route path="/profile" element={<Profile token={token} />} />
+              <Route path="about" element={<About token={token} />} />
               <Route element={<AdminRoute token={token} />}>
                 <Route path="users" element={<Users token={token} />} />
               </Route>

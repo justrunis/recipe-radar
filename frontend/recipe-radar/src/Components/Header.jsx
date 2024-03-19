@@ -32,6 +32,7 @@ export default function Header({ token }) {
             {token && (
               <>
                 <Nav.Link href="/">Home</Nav.Link>
+                <Nav.Link href="/about">About</Nav.Link>
               </>
             )}
             {token && role === "admin" && (

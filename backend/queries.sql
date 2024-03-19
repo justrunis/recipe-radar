@@ -286,3 +286,29 @@ VALUES (9, 1, 'In a skillet, cook ground beef, chopped onion, and chopped bell p
        (9, 6, 'Repeat with the remaining tortillas and beef mixture.'),
        (9, 7, 'Cut the quesadillas into wedges and serve with sour cream and salsa.');
 
+-- Inserting recipe details
+INSERT INTO recipes (name, category, difficulty)
+VALUES ('Waffles', 'Breakfast', 2);
+
+-- Assuming the returned id is 10 for the sake of this example
+-- Inserting ingredients
+INSERT INTO ingredients (recipe_id, name, amount, type)
+VALUES (10, 'All-purpose flour', '2 cups', NULL),
+       (10, 'Baking powder', '1 tbsp', NULL),
+       (10, 'Sugar', '2 tbsp', NULL),
+       (10, 'Salt', '1/2 tsp', NULL),
+       (10, 'Eggs', '2', NULL),
+       (10, 'Milk', '1 3/4 cups', NULL),
+       (10, 'Butter', '1/2 cup', 'melted'),
+       (10, 'Vanilla extract', '1 tsp', NULL),
+       (10, 'Maple syrup', 'for serving', NULL),
+       (10, 'Fresh berries', 'for serving', NULL);
+
+-- Inserting instructions
+INSERT INTO instructions (recipe_id, step_number, instruction)
+VALUES (10, 1, 'In a large bowl, whisk together flour, baking powder, sugar, and salt.'),
+       (10, 2, 'In a separate bowl, beat eggs and stir in milk, melted butter, and vanilla extract.'),
+       (10, 3, 'Gradually add the wet ingredients to the dry ingredients, stirring until just combined.'),
+       (10, 4, 'Preheat a waffle iron and lightly grease with non-stick spray.'),
+       (10, 5, 'Pour batter onto the preheated waffle iron and cook according to the manufacturer''s instructions.'),
+       (10, 6, 'Serve hot with maple syrup and fresh berries.');
