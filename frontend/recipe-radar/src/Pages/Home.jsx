@@ -17,7 +17,7 @@ import { useQuery } from "react-query";
 import { queryClient } from "../App";
 import { getUserId, getUserRole } from "../Auth/auth";
 
-const invalidate = async () => {
+const invalidateRecipes = async () => {
   await queryClient.invalidateQueries({
     queryKey: ["allRecipes"],
   });
@@ -132,7 +132,7 @@ export default function Home({ token }) {
       console.error("Error:", error);
     }
 
-    invalidate();
+    invalidateRecipes();
 
     toast.success(`${recipeName} recipe added successfully!`);
   }
@@ -141,7 +141,7 @@ export default function Home({ token }) {
     const URL = variables.API_URL + "deleteRecipe/" + id;
     const response = await makeDeleteRequest(URL);
     if (response) {
-      invalidate();
+      invalidateRecipes();
       toast.success("Recipe deleted successfully!");
     }
     setCurrentPage(1);
@@ -168,7 +168,7 @@ export default function Home({ token }) {
       console.error("Error:", error);
     }
 
-    invalidate();
+    invalidateRecipes();
     toast.success("Recipe updated successfully!");
   }
 
@@ -232,10 +232,10 @@ export default function Home({ token }) {
           </>
         ) : null}
         <div className="recipes-container">
-          {currentRecipes.map((meal) => (
+          {currentRecipes.map((recipe) => (
             <Recipe
-              key={meal.id}
-              meal={meal}
+              key={recipe.id}
+              recipe={recipe}
               onDelete={(id) => deleteRecipe(id)}
               onEdit={(recipe) => editRecipe(recipe)}
             />

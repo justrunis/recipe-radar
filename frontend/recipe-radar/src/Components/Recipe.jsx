@@ -8,18 +8,18 @@ import { variables } from "../Variables";
 import RecipeImage from "./RecipeImage";
 import { getUserRole, getUserId } from "../Auth/auth";
 
-export default function Recipe({ meal, onDelete, onEdit }) {
+export default function Recipe({ recipe, onDelete, onEdit }) {
   const [imageUrl, setImageUrl] = useState(null);
 
   const userRole = getUserRole(localStorage.getItem("jwtToken"));
   const currentUserId = getUserId(localStorage.getItem("jwtToken"));
 
   useEffect(() => {
-    if (!meal || !meal.id) return;
+    if (!recipe || !recipe.id) return;
 
     const fetchImage = async () => {
       try {
-        const URL = variables.API_URL + "recipeImage/" + meal.id;
+        const URL = variables.API_URL + "recipeImage/" + recipe.id;
         const image = await getRecipeImageById(URL);
         if (image) {
           const imageUrl = window.URL.createObjectURL(image);
@@ -31,7 +31,7 @@ export default function Recipe({ meal, onDelete, onEdit }) {
     };
 
     fetchImage();
-  }, [meal]);
+  }, [recipe]);
 
   const deleteRecipe = async (id, name) => {
     const confirmDelete = window.confirm(
@@ -43,25 +43,26 @@ export default function Recipe({ meal, onDelete, onEdit }) {
   };
 
   return (
-    <article className="meal-container col-4">
-      <h2 className="meal-name">{meal.name}</h2>
-      <RecipeImage meal={meal} imageUrl={imageUrl} />
-      <div className="meal-detail-container">
-        <h4 className="meal-category">Meal category: {meal.category}</h4>
+    <article className="recipe-container col-4">
+      <h2 className="recipe-name">{recipe.name}</h2>
+      <RecipeImage recipe={recipe} imageUrl={imageUrl} />
+      <div className="recipe-detail-container">
+        <h4 className="recipe-category">Recipe category: {recipe.category}</h4>
       </div>
       <RecipeInformation
-        ingredients={meal.ingredients}
-        instructions={meal.instructions}
+        ingredients={recipe.ingredients}
+        instructions={recipe.instructions}
       />
-      <h2 className="meal-category">Difficulty</h2>
-      <Rating value={meal.difficulty} disabled />
-      {userRole === variables.SUPER_ROLE || currentUserId === meal?.user_id ? (
+      <h2 className="recipe-category">Difficulty</h2>
+      <Rating value={recipe.difficulty} disabled />
+      {userRole === variables.SUPER_ROLE ||
+      currentUserId === recipe?.user_id ? (
         <div className="button-container">
-          <AddRecipeModal mode="edit" recipe={meal} onEdit={onEdit} />
+          <AddRecipeModal mode="edit" recipe={recipe} onEdit={onEdit} />
           <button
             variant="contained"
             className="remove-button"
-            onClick={() => deleteRecipe(meal.id, meal.name)}
+            onClick={() => deleteRecipe(recipe.id, recipe.name)}
           >
             Remove
           </button>

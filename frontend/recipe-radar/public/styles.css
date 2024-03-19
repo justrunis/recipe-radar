@@ -62,7 +62,7 @@ footer p {
   color: gray;
 }
 
-.meal-container {
+.recipe-container {
   margin-top: 20px;
   display: flex;
   flex-direction: column;
@@ -76,19 +76,19 @@ footer p {
   max-width: 500px;
 }
 
-.meal-detail-container {
+.recipe-detail-container {
   text-align: center;
   margin-top: 10px;
 }
 
-.meal-name {
+.recipe-name {
   font-size: 24px;
   font-weight: bold;
   color: var(--primary-color);
   text-align: center;
 }
 
-.meal-image {
+.recipe-image {
   width: 200px;
   height: 200px;
   object-fit: cover;
@@ -110,19 +110,19 @@ footer p {
   max-height: 70%;
 }
 
-.meal-category,
-.meal-area {
+.recipe-category,
+.recipe-area {
   font-size: 16px;
   color: var(--secondary-color);
 }
 
-.meal-instructions {
+.recipe-instructions {
   margin-top: 10px;
   font-size: 16px;
   color: #333;
 }
 
-.meal-instructions li {
+.recipe-instructions li {
   margin-bottom: 5px;
 }
 
@@ -246,7 +246,7 @@ footer p {
   scale: 1.2;
 }
 
-.meal-buttons {
+.recipe-buttons {
   display: flex;
   gap: 1rem;
   margin-top: 1rem;
@@ -390,7 +390,7 @@ footer p {
 }
 
 @media (max-width: 992px) {
-  .meal-container {
+  .recipe-container {
     width: 100%;
   }
 

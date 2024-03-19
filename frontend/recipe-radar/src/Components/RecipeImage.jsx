@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Modal } from "@mui/material";
 
-export default function RecipeImage({ meal, imageUrl }) {
+export default function RecipeImage({ recipe, imageUrl }) {
   const [showModal, setShowModal] = useState(false);
 
   const openModal = () => {
@@ -19,9 +19,9 @@ export default function RecipeImage({ meal, imageUrl }) {
   return (
     <>
       <img
-        className="meal-image"
+        className="recipe-image"
         src={imageUrl || "./images/default-image.png"}
-        alt={`${meal.name} image`}
+        alt={`${recipe.name} image`}
         style={{ transition: "transform 0.3s", cursor: "pointer" }}
         onMouseOver={(e) => {
           e.target.style.transform = "scale(1.3)";
@@ -40,7 +40,7 @@ export default function RecipeImage({ meal, imageUrl }) {
           <img
             className="modal-image"
             src={imageUrl || "./images/default-image.png"}
-            alt={`${meal.name} image`}
+            alt={`${recipe.name} image`}
           />
         </div>
       </Modal>
