@@ -289,7 +289,8 @@ app.post("/saveImage", async (req, res) => {
     return res.json({ message: "File saved successfully" });
   }
   const file = req.files.file; // Assuming the file input field name is "file"
-
+  const recipe = await getRecipeById(req.body.recipeId);
+  file.name = recipe.name + "-" + file.name;
   // Move the file to the desired location
   file.mv(`${__dirname}/images/${file.name}`, async (err) => {
     if (err) {
