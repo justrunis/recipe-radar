@@ -20,6 +20,7 @@ export const variables = {
     { strCategory: "Pizza" },
     { strCategory: "Sandwich" },
   ],
-  API_URL: "http://localhost:4000/",
+  API_URL: process.env.REACT_APP_BACKEND_URL,
   SUPER_ROLE: "admin",
 };
+console.log(process.env.REACT_APP_BACKEND_URL);

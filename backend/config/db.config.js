@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 dotenv.config({ path: "../.env" });
-console.log(process.env.DB_PASSWORD + " PASSWORD");
 
 const dbConfig = {
   HOST: process.env.DB_HOST,
